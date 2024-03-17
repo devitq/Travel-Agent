@@ -63,13 +63,13 @@ pip install -r requirements/dev.txt
 #### Windows
 
 ```cmd
-copy .env.template .env
+copy template.env .env
 ```
 
 #### Linux
 
 ```bash
-cp .env.template .env
+cp template.env .env
 ```
 
 And replace all default values with actual values
@@ -107,13 +107,13 @@ cd backend-devitq
 #### Windows
 
 ```cmd
-copy .env.template .env
+copy template.env .env
 ```
 
 #### Linux
 
 ```bash
-cp .env.template .env
+cp template.env .env
 ```
 
 And replace all default values with actual values
@@ -132,6 +132,11 @@ docker compose up -d
 
 ## Notes
 
-Bot Token: 6943803094:AAEHG-vOP2pNEuxb9rDIhisiQuGLuBIjx1Q
+Set this in .env file when using docker compose:
+
+```text
+BOT_TOKEN = 6943803094:AAEHG-vOP2pNEuxb9rDIhisiQuGLuBIjx1Q
+SQLALCHEMY_DATABASE_URI = postgresql://postgres:wTAb5KoZ4dBtscg@localhost:5432/postgres
+```
 
 I thought up the architecture of the project myself, I won't mind feedback on it)

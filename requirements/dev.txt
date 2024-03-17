@@ -3,5 +3,5 @@ mypy
 sort-requirements
 
 -r prod.txt
--r tests.txt
+-r test.txt
 -r lints.txt
