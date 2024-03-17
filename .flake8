@@ -1,0 +1,10 @@
+[flake8]
+
+exclude =
+    migrations,
+    __pycache__,
+    venv
+import-order-style=google
+inline-quotes = double
+max-line-lenght = 79
+application_import_names = bot

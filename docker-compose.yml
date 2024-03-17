@@ -1,0 +1,22 @@
+name: travel_agent_bot
+version: '3'
+
+services:
+  app:
+    build: .
+    container_name: bot
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:latest
+    container_name: db
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: wTAb5KoZ4dBtscg
+    ports:
+      - "5432:5432"
+
+volumes:
+  travel_agent_bot_data:

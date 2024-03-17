@@ -1,0 +1,9 @@
+[tool.black]
+line-length = 79
+skip-string-normalization=true
+
+[tool.isort]
+order_by_type = false
+
+[tool.mypy]
+exclude = "migrations"

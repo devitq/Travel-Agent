@@ -1,0 +1,7 @@
+black
+mypy
+sort-requirements
+
+-r prod.txt
+-r tests.txt
+-r lints.txt
