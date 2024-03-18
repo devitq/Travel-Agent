@@ -132,7 +132,7 @@ docker compose pull
 docker compose up -d
 ```
 
-## Notes
+## 📝 Notes
 
 Set this in .env file when using docker compose:
 
