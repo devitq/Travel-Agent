@@ -1,3 +1,5 @@
+![banner](/img/banner.png)
+
 # ✈️ Travel agent bot
 
 This bot will help you organise and plan your travels.
