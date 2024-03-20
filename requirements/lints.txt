@@ -13,7 +13,6 @@ flake8-import-order
 flake8-print
 flake8-quotes
 flake8-return
-flake8-type-ignore
 flake8-use-pathlib
 flake8_implicit_str_concat
 pep8-naming

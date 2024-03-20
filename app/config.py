@@ -8,5 +8,8 @@ load_dotenv()
 
 
 class Config:
-    BOT_TOKEN = os.getenv("BOT_TOKEN")
-    SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI")
+    BOT_TOKEN = os.getenv("BOT_TOKEN", "")
+    SQLALCHEMY_DATABASE_URI = os.getenv(
+        "SQLALCHEMY_DATABASE_URI",
+        "sqlite:///database.db",
+    )
