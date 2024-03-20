@@ -5,6 +5,7 @@ from typing import Optional
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 
+from app.callbacks import profile
 from app.config import Config
 from app.handlers import help_command, profile_command, start_command
 from app.middlewares.throttling import ThrottlingMiddleware
@@ -18,9 +19,11 @@ async def main() -> None:
         bot = Bot(bot_token, parse_mode=ParseMode.HTML)
 
         dp.message.middleware(ThrottlingMiddleware(0.5))
+        # type: ignore
         dp.include_routers(
             start_command.router,
             profile_command.router,
+            profile.router,
             help_command.router,
         )
 

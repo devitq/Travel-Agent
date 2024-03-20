@@ -74,6 +74,10 @@ class User(Base):
         return normalized_value
 
     @classmethod
+    def get_user_queryset_by_telegram_id(cls, telegram_id):
+        return session.query(cls).filter(cls.telegram_id == telegram_id)
+
+    @classmethod
     def get_user_by_telegram_id(cls, telegram_id):
         return (
             session.query(cls).filter(cls.telegram_id == telegram_id).first()

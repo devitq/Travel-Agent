@@ -12,4 +12,6 @@ class RegistrationForm(StatesGroup):
 
 
 class UserAltering(StatesGroup):
-    new_value = State()
+    message_id = State()
+    column = State()
+    value = State()

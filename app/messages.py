@@ -26,3 +26,5 @@ PROFILE = (
     "\tCity: <b>{city}</b>"
 )
 NOT_SET = "<i>Not set</i>"
+EDIT_USERNAME = "Enter your username:\n<i>Allowed characters: a-z, A-Z, 0-9, _</i>\n<i>Length: 5-20 characters</i>"
+EDIT_BIO = "Enter your bio (enter /skip if you want to set it to None):\n<i>Maximum length: 100 characters</i>"

@@ -23,9 +23,13 @@ def validate_country(country: str):
     if not geocode:
         return False, None
 
-    is_loc_country = geocode.raw.get(
-        "type", None,
-    ) == "administrative"
+    is_loc_country = (
+        geocode.raw.get(
+            "type",
+            None,
+        )
+        == "administrative"
+    )
 
     if is_loc_country:
         normalized_country = geocode.raw.get("name", "Invalid country")
@@ -55,9 +59,13 @@ def validate_city(city: str, country: str):
     if not geocode:
         return False, None
 
-    check_in_valid = geocode.raw.get(
-        "type", None,
-    ) in valid_list
+    check_in_valid = (
+        geocode.raw.get(
+            "type",
+            None,
+        )
+        in valid_list
+    )
 
     if geocode and check_in_valid:
         normalized_country = geocode.raw.get("name", "Invalid city")
