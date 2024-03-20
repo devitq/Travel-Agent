@@ -76,6 +76,12 @@ cp template.env .env
 
 And replace all default values with actual values
 
+### Generate new migrations(if needed)
+
+```bash
+alembic -c app/alembic.ini revision --autogenerate
+```
+
 ### Apply migrations with alembic
 
 ```bash
@@ -129,7 +135,7 @@ docker compose pull
 ### Start containers (in detached mode)
 
 ```bash
-docker compose up -d
+docker compose up -d --build
 ```
 
 ## 📝 Notes
