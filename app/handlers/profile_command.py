@@ -1,4 +1,3 @@
-# type: ignore
 __all__ = ()
 
 from aiogram import Router
@@ -16,6 +15,9 @@ router = Router(name="profile_command")
 
 @router.message(Command("profile"), Registered())
 async def command_profile_handler(message: Message) -> None:
+    if message.from_user is None:
+        return
+
     user = User().get_user_by_telegram_id(message.from_user.id)
 
     await message.answer(

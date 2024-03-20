@@ -1,4 +1,3 @@
-# type: ignore
 __all__ = ()
 
 from aiogram import F, Router
@@ -17,11 +16,11 @@ router = Router(name="start_command")
 
 @router.message(CommandStart())
 async def command_start_handler(message: Message, state: FSMContext) -> None:
-    if (
-        User.get_user_by_telegram_id(
-            telegram_id=message.from_user.id,
-        )
-        is not None
+    if message.from_user is None:
+        return
+
+    if User.user_by_telegram_id_exist(
+        telegram_id=message.from_user.id,
     ):
         await message.answer(
             messages.WELCOME_AGAIN_MESSAGE.format(
@@ -41,6 +40,9 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
 
 @router.message(RegistrationForm.username, F.text)
 async def username_handler(message: Message, state: FSMContext) -> None:
+    if message.text is None:
+        return
+
     username = message.text.strip()
 
     try:
@@ -66,6 +68,9 @@ async def username_handler(message: Message, state: FSMContext) -> None:
 
 @router.message(RegistrationForm.age, F.text)
 async def age_handler(message: Message, state: FSMContext) -> None:
+    if message.text is None:
+        return
+
     age = message.text.strip()
 
     try:
@@ -88,6 +93,9 @@ async def age_handler(message: Message, state: FSMContext) -> None:
 
 @router.message(RegistrationForm.sex, F.text)
 async def sex_handler(message: Message, state: FSMContext) -> None:
+    if message.text is None:
+        return
+
     sex = message.text.strip().lower()
 
     if sex not in ["male", "female"]:
@@ -106,6 +114,9 @@ async def sex_handler(message: Message, state: FSMContext) -> None:
 
 @router.message(RegistrationForm.bio, F.text)
 async def bio_handler(message: Message, state: FSMContext) -> None:
+    if message.text is None:
+        return
+
     bio = message.text.strip()
 
     if bio == "/skip":
@@ -132,6 +143,9 @@ async def bio_handler(message: Message, state: FSMContext) -> None:
 
 @router.message(RegistrationForm.location, F.text)
 async def location_handler(message: Message, state: FSMContext) -> None:
+    if message.text is None or message.from_user is None:
+        return
+
     location = message.text.strip().split(", ")
 
     if len(location) != 2:
