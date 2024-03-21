@@ -17,18 +17,18 @@ async def delete_message_from_state(
     data = await state.get_data()
 
     if (
-        "previous_message_id" in data
-        and data["previous_message_id"] is not None
+        "error_message_id" in data
+        and data["error_message_id"] is not None
     ):
         try:
             await bot.delete_message(
-                message_id=data["previous_message_id"],
+                message_id=data["error_message_id"],
                 chat_id=chat_id,
             )
         except TelegramBadRequest:
             pass
 
-        await state.update_data(previous_message_id=None)
+        await state.update_data(error_message_id=None)
 
     if (
         "input_message_id" in data
@@ -61,5 +61,5 @@ async def handle_validation_error(
 
     error_message = await message.answer(str(e))
     await state.update_data(
-        previous_message_id=error_message.message_id,
+        error_message_id=error_message.message_id,
     )

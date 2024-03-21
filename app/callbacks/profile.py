@@ -213,7 +213,7 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
                 city=user.city,
             ),
             message.chat.id,
-            state_data["message_id"],
+            state_data["profile_message_id"],
             reply_markup=get(),
         )
     except TelegramBadRequest:
