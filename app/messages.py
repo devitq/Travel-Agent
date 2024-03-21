@@ -15,6 +15,7 @@ INPUT_BIO_SKIPPED = "Sure. You can always fill it later."
 INPUT_LOCATION = "Enter your location in this format:\n<i>Format: country, city</i>\n<i>Example: Russia, Moscow</i>"
 INPUT_CALLBACK = "All right, your <b>{key}</b> is set to: <b>{value}</b>"
 VALIDATION_ERROR_MESSAGE = "Invalid input. Please try again."
+CANCEL_CHANGE = "<i>Enter /cancel to cancel change.</i>"
 
 PROFILE = (
     "<b>Your profile:</b>\n\n"
@@ -22,10 +23,11 @@ PROFILE = (
     "\tAge: <b>{age}</b>\n"
     "\tSex: <b>{sex}</b>\n"
     "\tCountry: <b>{country}</b>\n"
-    "\tCity: <b>{city}</b>"
+    "\tCity: <b>{city}</b>\n"
     "\tBio: <b>{bio}</b>\n"
 )
 NOT_SET = "<i>Not set</i>"
 EDIT_USERNAME = "Enter your username:\n<i>Allowed characters: a-z, A-Z, 0-9, _</i>\n<i>Length: 5-20 characters</i>"
 EDIT_BIO = "Enter your bio (enter /skip if you want to set it to None):\n<i>Maximum length: 100 characters</i>"
 PROFILE_UPDATED = "✅ Profile updated"
+CHANGE_CANCELED = "❌ Change canceled"

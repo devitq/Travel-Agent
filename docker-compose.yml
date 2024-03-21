@@ -1,22 +1,62 @@
 name: travel_agent_bot
-version: '3'
+version: "3"
 
 services:
-  app:
-    build: .
-    container_name: bot
-    depends_on:
-      - postgres
-
   postgres:
     image: postgres:latest
-    container_name: db
+    container_name: postgres
+    healthcheck:
+      test: pg_isready -U postgres -h localhost
+      interval: 5s
+      timeout: 5s
+      retries: 10
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: wTAb5KoZ4dBtscg
     ports:
       - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  app:
+    build: .
+    container_name: bot
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      BOT_TOKEN: ${BOT_TOKEN}
+      REDIS_URL: redis://redis:6379/
+      SQLALCHEMY_DATABASE_URI: postgresql://postgres:wTAb5KoZ4dBtscg@postgres:5432/postgres
+    entrypoint: ["bash", "-c"]
+    command: ["alembic -c app/alembic.ini upgrade head && python -m app"]
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@mail.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    restart: always
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
 
 volumes:
-  travel_agent_bot_data:
+  postgres_data:
+  redis_data:
+  pgadmin_data:

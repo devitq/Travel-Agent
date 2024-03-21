@@ -33,23 +33,31 @@ async def profile_change_callback(
     column = callback.data.replace("profile_change_", "")
 
     if column == "username":
-        message = await callback.message.answer(messages.EDIT_USERNAME)
+        message = await callback.message.answer(
+            f"{messages.EDIT_USERNAME}\n{messages.CANCEL_CHANGE}",
+        )
     elif column == "age":
-        message = await callback.message.answer(messages.INPUT_AGE)
+        message = await callback.message.answer(
+            f"{messages.INPUT_AGE}\n{messages.CANCEL_CHANGE}",
+        )
     elif column == "bio":
-        message = await callback.message.answer(messages.EDIT_BIO)
+        message = await callback.message.answer(
+            f"{messages.EDIT_BIO}\n{messages.CANCEL_CHANGE}",
+        )
     elif column == "sex":
         message = await callback.message.answer(
-            messages.INPUT_SEX,
+            f"{messages.INPUT_SEX}\n{messages.CANCEL_CHANGE}",
             reply_markup=profile(["Male", "Female"]),
         )
     elif column == "location":
-        message = await callback.message.answer(messages.INPUT_LOCATION)
+        message = await callback.message.answer(
+            f"{messages.INPUT_LOCATION}\n{messages.CANCEL_CHANGE}",
+        )
 
     await state.update_data(
         column=column,
         message_id=callback.message.message_id,
-        input_message=message,
+        input_message_id=message.message_id,
     )
     await state.set_state(UserAltering.value)
 
@@ -61,6 +69,23 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
     column = (await state.get_data()).get("column")
     value = message.text.strip()
 
+    if value == "/cancel":
+        await message.answer(
+            messages.CHANGE_CANCELED,
+            reply_markup=ReplyKeyboardRemove(),
+        )
+
+        await state.update_data(successfully=True)
+        await message.delete()
+        await delete_message_from_state(
+            state,
+            message.chat.id,
+            message.bot,
+        )
+        await state.clear()
+
+        return
+
     if column == "username":
         try:
             validated_value = User().validate_username(
@@ -69,10 +94,16 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
             )
         except AssertionError as e:
             await message.delete()
-            await delete_message_from_state(state)
+            await delete_message_from_state(
+                state,
+                message.chat.id,
+                message.bot,
+            )
 
             error_message = await message.answer(str(e))
-            await state.update_data(previous_message=error_message)
+            await state.update_data(
+                previous_message_id=error_message.message_id,
+            )
 
             return
 
@@ -82,10 +113,16 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
             validated_age = User().validate_age(key="age", value=value)
         except AssertionError as e:
             await message.delete()
-            await delete_message_from_state(state)
+            await delete_message_from_state(
+                state,
+                message.chat.id,
+                message.bot,
+            )
 
             error_message = await message.answer(str(e))
-            await state.update_data(previous_message=error_message)
+            await state.update_data(
+                previous_message_id=error_message.message_id,
+            )
 
             return
 
@@ -93,16 +130,26 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
     elif column == "bio":
         if value == "/skip":
             await state.update_data(value=None, successfully=True)
-            await delete_message_from_state(state)
+            await delete_message_from_state(
+                state,
+                message.chat.id,
+                message.bot,
+            )
         else:
             try:
                 validated_bio = User().validate_bio(key="bio", value=value)
             except AssertionError as e:
                 await message.delete()
-                await delete_message_from_state(state)
+                await delete_message_from_state(
+                    state,
+                    message.chat.id,
+                    message.bot,
+                )
 
                 error_message = await message.answer(str(e))
-                await state.update_data(previous_message=error_message)
+                await state.update_data(
+                    previous_message_id=error_message.message_id,
+                )
 
                 return
 
@@ -114,10 +161,16 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
             validated_sex = User().validate_sex(key="sex", value=value)
         except AssertionError as e:
             await message.delete()
-            await delete_message_from_state(state)
+            await delete_message_from_state(
+                state,
+                message.chat.id,
+                message.bot,
+            )
 
             error_message = await message.answer(str(e))
-            await state.update_data(previous_message=error_message)
+            await state.update_data(
+                previous_message_id=error_message.message_id,
+            )
 
             return
 
@@ -127,12 +180,18 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
 
         if len(location) != 2:
             await message.delete()
-            await delete_message_from_state(state)
+            await delete_message_from_state(
+                state,
+                message.chat.id,
+                message.bot,
+            )
 
             error_message = await message.answer(
                 messages.VALIDATION_ERROR_MESSAGE,
             )
-            await state.update_data(previous_message=error_message)
+            await state.update_data(
+                previous_message_id=error_message.message_id,
+            )
 
             return
 
@@ -145,10 +204,16 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
             )
         except AssertionError as e:
             await message.delete()
-            await delete_message_from_state(state)
+            await delete_message_from_state(
+                state,
+                message.chat.id,
+                message.bot,
+            )
 
             error_message = await message.answer(str(e))
-            await state.update_data(previous_message=error_message)
+            await state.update_data(
+                previous_message_id=error_message.message_id,
+            )
 
             return
 
@@ -159,18 +224,27 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
             )
         except AssertionError as e:
             await message.delete()
-            await delete_message_from_state(state)
+            await delete_message_from_state(
+                state,
+                message.chat.id,
+                message.bot,
+            )
 
             error_message = await message.answer(str(e))
-            await state.update_data(previous_message=error_message)
+            await state.update_data(
+                previous_message_id=error_message.message_id,
+            )
 
             return
 
-        await delete_message_from_state(state)
+        await delete_message_from_state(state, message.chat.id, message.bot)
 
-        await state.update_data(value=[validated_country, validated_city])
+        await state.update_data(
+            value=[validated_country, validated_city],
+            successfully=True,
+        )
 
-    await delete_message_from_state(state)
+    await delete_message_from_state(state, message.chat.id, message.bot)
 
     state_data = await state.get_data()
 

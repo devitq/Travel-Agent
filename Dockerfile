@@ -10,8 +10,3 @@ RUN pip install --no-cache-dir -r prod.txt
 
 # Copy the rest of the application files
 COPY . .
-
-# Apply migrations
-# RUN alembic -c app/alembic.ini upgrade head
-
-CMD ["python", "-m", "app"]

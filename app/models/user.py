@@ -18,7 +18,7 @@ class User(Base):
     __tablename__ = "users"
 
     telegram_id = sa.Column(sa.BigInteger, primary_key=True, index=True)
-    username = sa.Column(sa.String(20), nullable=False, unique=True)
+    username = sa.Column(sa.String(32), nullable=False, unique=True)
     age = sa.Column(sa.SmallInteger, nullable=False)
     bio = sa.Column(sa.String(100), nullable=True)
     sex = sa.Column(sa.String(6), nullable=True)
@@ -29,7 +29,7 @@ class User(Base):
     def validate_username(self, key, value):
         regex_pattern = re.compile(r"^[a-zA-Z0-9_]{5,20}$")
 
-        assert len(value) <= 20, "Username must be 20 characters or fewer."
+        assert len(value) <= 32, "Username must be 20 characters or fewer."
         assert len(value) >= 5, "Username must be at least 5 characters."
         assert (
             re.match(regex_pattern, value) is not None
@@ -42,7 +42,7 @@ class User(Base):
 
     @validates("age")
     def validate_age(self, key, value):
-        assert str(value).isnumeric(), "Invalid input. Please try again."
+        assert str(value).isdigit(), "Invalid input. Please try again."
         value = int(value)
         assert value >= 13, "You must be at least 13 years old."
         assert value <= 120, "You must be less than 120 years old."

@@ -13,3 +13,7 @@ class Config:
         "SQLALCHEMY_DATABASE_URI",
         "sqlite:///database.db",
     )
+    REDIS_URL = os.getenv(
+        "REDIS_URL",
+        "redis://localhost:6379",
+    )
