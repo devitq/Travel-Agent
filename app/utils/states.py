@@ -16,10 +16,7 @@ async def delete_message_from_state(
 
     data = await state.get_data()
 
-    if (
-        "error_message_id" in data
-        and data["error_message_id"] is not None
-    ):
+    if "error_message_id" in data and data["error_message_id"] is not None:
         try:
             await bot.delete_message(
                 message_id=data["error_message_id"],
