@@ -17,7 +17,7 @@ Base: Any = declarative_base()
 class User(Base):
     __tablename__ = "users"
 
-    telegram_id = sa.Column(sa.Integer, primary_key=True)
+    telegram_id = sa.Column(sa.BigInteger, primary_key=True, index=True)
     username = sa.Column(sa.String(20), nullable=False, unique=True)
     age = sa.Column(sa.SmallInteger, nullable=False)
     bio = sa.Column(sa.String(100), nullable=True)
@@ -35,6 +35,9 @@ class User(Base):
             re.match(regex_pattern, value) is not None
         ), "a-z, A-Z, 0-9, _ only allowed in username."
 
+        if session.query(User).filter(User.username == value).first():
+            raise AssertionError("Username is already taken.")
+
         return value
 
     @validates("age")
@@ -50,6 +53,15 @@ class User(Base):
     def validate_bio(self, key, value):
         if value is not None:
             assert len(value) <= 100, "Bio must be 100 characters or fewer."
+
+        return value
+
+    @validates("sex")
+    def validate_sex(self, key, value):
+        assert value in [
+            "male",
+            "female",
+        ], "Invalid input. Please try again."
 
         return value
 
