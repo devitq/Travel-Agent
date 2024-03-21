@@ -24,6 +24,22 @@ It provides a full suite of well known enterprise-level persistence patterns, de
 
 PostgreSQL is a powerful, open source object-relational database system with over 35 years of active development that has earned it a strong reputation for reliability, feature robustness, and performance.
 
+In project used as the main database.
+
+### Redis
+
+The in-memory data store used by millions of developers as a cache, vector database, document database, streaming engine, and message broker.
+
+In project redis used as storage for states.
+
+## 🤝 Integrations
+
+### OpenStreetMap API
+
+OpenStreetMap is built by a community of mappers that contribute and maintain data about roads, trails, cafés, railway stations, and much more, all over the world.
+
+In the project, the interaction with OpenStreetMap API is implemented using geopy lib.
+
 ## 🛠️ Local development & testing
 
 ### Clone repository with git
@@ -98,6 +114,16 @@ python -m app
 
 Our app uses docker compose for production deployment.
 
+**Structure**:
+
+```bash
+travel_agent /
+    postgres
+    redis
+    bot
+    pgadmin
+```
+
 ### Clone repository with git
 
 ```bash
@@ -139,12 +165,5 @@ docker compose up -d --build
 ```
 
 ## 📝 Notes
-
-Set this in .env file when using docker compose:
-
-```text
-BOT_TOKEN = 6943803094:AAEHG-vOP2pNEuxb9rDIhisiQuGLuBIjx1Q
-SQLALCHEMY_DATABASE_URI = postgresql://postgres:wTAb5KoZ4dBtscg@localhost:5432/postgres
-```
 
 I thought up the architecture of the project myself, I won't mind feedback on it)
