@@ -1,9 +1,9 @@
-__all__ = ("profile",)
+__all__ = ("sex_keyboard",)
 
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 
-def profile(text: str | list):
+def sex_keyboard(text: str | list):
     builder = ReplyKeyboardBuilder()
 
     if isinstance(text, str):

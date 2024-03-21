@@ -29,7 +29,7 @@ class User(Base):
     def validate_username(self, key, value):
         regex_pattern = re.compile(r"^[a-zA-Z0-9_]{5,20}$")
 
-        assert len(value) <= 32, "Username must be 20 characters or fewer."
+        assert len(value) <= 32, "Username must be 32 characters or fewer."
         assert len(value) >= 5, "Username must be at least 5 characters."
         assert (
             re.match(regex_pattern, value) is not None

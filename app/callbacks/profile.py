@@ -8,11 +8,15 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message, ReplyKeyboardRemove
 
 from app import messages, session
-from app.filters.user_filter import Registered, RegisteredCallback
-from app.keyboards.builders import profile
+from app.filters.user import Registered, RegisteredCallback
+from app.keyboards.builders import sex_keyboard
 from app.keyboards.profile import get
 from app.models.user import User
-from app.utils.states import delete_message_from_state, UserAltering
+from app.states.user import UserAltering
+from app.utils.states import (
+    delete_message_from_state,
+    handle_validation_error,
+)
 
 
 router = Router(name="profile_callback")
@@ -47,7 +51,7 @@ async def profile_change_callback(
     elif column == "sex":
         message = await callback.message.answer(
             f"{messages.INPUT_SEX}\n{messages.CANCEL_CHANGE}",
-            reply_markup=profile(["Male", "Female"]),
+            reply_markup=sex_keyboard(["Male", "Female"]),
         )
     elif column == "location":
         message = await callback.message.answer(
@@ -93,17 +97,7 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
                 value=value,
             )
         except AssertionError as e:
-            await message.delete()
-            await delete_message_from_state(
-                state,
-                message.chat.id,
-                message.bot,
-            )
-
-            error_message = await message.answer(str(e))
-            await state.update_data(
-                previous_message_id=error_message.message_id,
-            )
+            await handle_validation_error(message, state, e)
 
             return
 
@@ -112,17 +106,7 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
         try:
             validated_age = User().validate_age(key="age", value=value)
         except AssertionError as e:
-            await message.delete()
-            await delete_message_from_state(
-                state,
-                message.chat.id,
-                message.bot,
-            )
-
-            error_message = await message.answer(str(e))
-            await state.update_data(
-                previous_message_id=error_message.message_id,
-            )
+            await handle_validation_error(message, state, e)
 
             return
 
@@ -139,17 +123,7 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
             try:
                 validated_bio = User().validate_bio(key="bio", value=value)
             except AssertionError as e:
-                await message.delete()
-                await delete_message_from_state(
-                    state,
-                    message.chat.id,
-                    message.bot,
-                )
-
-                error_message = await message.answer(str(e))
-                await state.update_data(
-                    previous_message_id=error_message.message_id,
-                )
+                await handle_validation_error(message, state, e)
 
                 return
 
@@ -160,17 +134,7 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
         try:
             validated_sex = User().validate_sex(key="sex", value=value)
         except AssertionError as e:
-            await message.delete()
-            await delete_message_from_state(
-                state,
-                message.chat.id,
-                message.bot,
-            )
-
-            error_message = await message.answer(str(e))
-            await state.update_data(
-                previous_message_id=error_message.message_id,
-            )
+            await handle_validation_error(message, state, e)
 
             return
 
@@ -179,18 +143,10 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
         location = value.split(", ")
 
         if len(location) != 2:
-            await message.delete()
-            await delete_message_from_state(
+            await handle_validation_error(
+                message,
                 state,
-                message.chat.id,
-                message.bot,
-            )
-
-            error_message = await message.answer(
-                messages.VALIDATION_ERROR_MESSAGE,
-            )
-            await state.update_data(
-                previous_message_id=error_message.message_id,
+                messages.VALIDATION_ERROR,
             )
 
             return
@@ -203,17 +159,7 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
                 value=country,
             )
         except AssertionError as e:
-            await message.delete()
-            await delete_message_from_state(
-                state,
-                message.chat.id,
-                message.bot,
-            )
-
-            error_message = await message.answer(str(e))
-            await state.update_data(
-                previous_message_id=error_message.message_id,
-            )
+            await handle_validation_error(message, state, e)
 
             return
 
@@ -223,17 +169,7 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
                 country=validated_country,
             )
         except AssertionError as e:
-            await message.delete()
-            await delete_message_from_state(
-                state,
-                message.chat.id,
-                message.bot,
-            )
-
-            error_message = await message.answer(str(e))
-            await state.update_data(
-                previous_message_id=error_message.message_id,
-            )
+            await handle_validation_error(message, state, e)
 
             return
 

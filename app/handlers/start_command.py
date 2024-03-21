@@ -6,9 +6,13 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
 
 from app import messages, session
-from app.keyboards.builders import profile
+from app.keyboards.builders import sex_keyboard
 from app.models.user import User
-from app.utils.states import delete_message_from_state, RegistrationForm
+from app.states.user import RegistrationForm
+from app.utils.states import (
+    delete_message_from_state,
+    handle_validation_error,
+)
 
 
 router = Router(name="start_command")
@@ -51,11 +55,7 @@ async def username_handler(message: Message, state: FSMContext) -> None:
             value=username,
         )
     except AssertionError as e:
-        await message.delete()
-        await delete_message_from_state(state, message.chat.id, message.bot)
-
-        error_message = await message.answer(str(e))
-        await state.update_data(previous_message_id=error_message.message_id)
+        await handle_validation_error(message, state, e)
 
         return
 
@@ -83,11 +83,7 @@ async def age_handler(message: Message, state: FSMContext) -> None:
     try:
         validated_age = User().validate_age(key="age", value=age)
     except AssertionError as e:
-        await message.delete()
-        await delete_message_from_state(state, message.chat.id, message.bot)
-
-        error_message = await message.answer(str(e))
-        await state.update_data(previous_message_id=error_message.message_id)
+        await handle_validation_error(message, state, e)
 
         return
 
@@ -101,7 +97,7 @@ async def age_handler(message: Message, state: FSMContext) -> None:
     )
     await message.answer(
         messages.INPUT_SEX,
-        reply_markup=profile(["Male", "Female"]),
+        reply_markup=sex_keyboard(["Male", "Female"]),
     )
 
 
@@ -115,11 +111,7 @@ async def sex_handler(message: Message, state: FSMContext) -> None:
     try:
         validated_sex = User().validate_sex(key="sex", value=sex)
     except AssertionError as e:
-        await message.delete()
-        await delete_message_from_state(state, message.chat.id, message.bot)
-
-        error_message = await message.answer(str(e))
-        await state.update_data(previous_message_id=error_message.message_id)
+        await handle_validation_error(message, state, e)
 
         return
 
@@ -154,17 +146,7 @@ async def bio_handler(message: Message, state: FSMContext) -> None:
         try:
             validated_bio = User().validate_bio(key="bio", value=bio)
         except AssertionError as e:
-            await message.delete()
-            await delete_message_from_state(
-                state,
-                message.chat.id,
-                message.bot,
-            )
-
-            error_message = await message.answer(str(e))
-            await state.update_data(
-                previous_message_id=error_message.message_id,
-            )
+            await handle_validation_error(message, state, e)
 
             return
 
@@ -187,11 +169,11 @@ async def location_handler(message: Message, state: FSMContext) -> None:
     location = message.text.strip().split(", ")
 
     if len(location) != 2:
-        await message.delete()
-        await delete_message_from_state(state, message.chat.id, message.bot)
-
-        error_message = await message.answer(messages.VALIDATION_ERROR_MESSAGE)
-        await state.update_data(previous_message_id=error_message.message_id)
+        await handle_validation_error(
+            message,
+            state,
+            messages.VALIDATION_ERROR,
+        )
 
         return
 
@@ -203,11 +185,7 @@ async def location_handler(message: Message, state: FSMContext) -> None:
             value=country,
         )
     except AssertionError as e:
-        await message.delete()
-        await delete_message_from_state(state, message.chat.id, message.bot)
-
-        error_message = await message.answer(str(e))
-        await state.update_data(previous_message_id=error_message.message_id)
+        await handle_validation_error(message, state, e)
 
         return
 
@@ -217,11 +195,7 @@ async def location_handler(message: Message, state: FSMContext) -> None:
             country=validated_country,
         )
     except AssertionError as e:
-        await message.delete()
-        await delete_message_from_state(state, message.chat.id, message.bot)
-
-        error_message = await message.answer(str(e))
-        await state.update_data(previous_message_id=error_message.message_id)
+        await handle_validation_error(message, state, e)
 
         return
 

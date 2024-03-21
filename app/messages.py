@@ -14,7 +14,7 @@ INPUT_BIO = "Enter your bio (enter /skip if you want to skip this step):\n<i>Max
 INPUT_BIO_SKIPPED = "Sure. You can always fill it later."
 INPUT_LOCATION = "Enter your location in this format:\n<i>Format: country, city</i>\n<i>Example: Russia, Moscow</i>"
 INPUT_CALLBACK = "All right, your <b>{key}</b> is set to: <b>{value}</b>"
-VALIDATION_ERROR_MESSAGE = "Invalid input. Please try again."
+VALIDATION_ERROR = "Invalid input. Please try again."
 CANCEL_CHANGE = "<i>Enter /cancel to cancel change.</i>"
 
 PROFILE = (

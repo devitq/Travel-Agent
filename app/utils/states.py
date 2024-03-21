@@ -1,27 +1,9 @@
-__all__ = ("RegistrationForm",)
+__all__ = ("delete_message_from_state", "handle_validation_error")
 
 from aiogram import Bot
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import State, StatesGroup
-
-
-class RegistrationForm(StatesGroup):
-    previous_message_id = State()
-    username = State()
-    age = State()
-    bio = State()
-    sex = State()
-    location = State()
-
-
-class UserAltering(StatesGroup):
-    column = State()
-    value = State()
-    message_id = State()
-    input_message_id = State()
-    previous_message_id = State()
-    successfully = State()
+from aiogram.types import Message
 
 
 async def delete_message_from_state(
@@ -63,3 +45,21 @@ async def delete_message_from_state(
             pass
 
         await state.update_data(input_message_id=None)
+
+
+async def handle_validation_error(
+    message: Message,
+    state: FSMContext,
+    e: AssertionError | str,
+) -> None:
+    await message.delete()
+    await delete_message_from_state(
+        state,
+        message.chat.id,
+        message.bot,
+    )
+
+    error_message = await message.answer(str(e))
+    await state.update_data(
+        previous_message_id=error_message.message_id,
+    )

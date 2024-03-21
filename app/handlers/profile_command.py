@@ -5,7 +5,7 @@ from aiogram.filters import Command
 from aiogram.types import Message
 
 from app import messages
-from app.filters.user_filter import Registered
+from app.filters.user import Registered
 from app.keyboards.profile import get
 from app.models.user import User
 
