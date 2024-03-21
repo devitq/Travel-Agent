@@ -12,7 +12,7 @@ from app.filters.user_filter import Registered, RegisteredCallback
 from app.keyboards.builders import profile
 from app.keyboards.profile import get
 from app.models.user import User
-from app.utils.states import UserAltering
+from app.utils.states import delete_message_from_state, UserAltering
 
 
 router = Router(name="profile_callback")
@@ -33,22 +33,23 @@ async def profile_change_callback(
     column = callback.data.replace("profile_change_", "")
 
     if column == "username":
-        await callback.message.answer(messages.EDIT_USERNAME)
+        message = await callback.message.answer(messages.EDIT_USERNAME)
     elif column == "age":
-        await callback.message.answer(messages.INPUT_AGE)
+        message = await callback.message.answer(messages.INPUT_AGE)
     elif column == "bio":
-        await callback.message.answer(messages.EDIT_BIO)
+        message = await callback.message.answer(messages.EDIT_BIO)
     elif column == "sex":
-        await callback.message.answer(
+        message = await callback.message.answer(
             messages.INPUT_SEX,
             reply_markup=profile(["Male", "Female"]),
         )
     elif column == "location":
-        await callback.message.answer(messages.INPUT_LOCATION)
+        message = await callback.message.answer(messages.INPUT_LOCATION)
 
     await state.update_data(
         column=column,
         message_id=callback.message.message_id,
+        input_message=message,
     )
     await state.set_state(UserAltering.value)
 
@@ -67,41 +68,72 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
                 value=value,
             )
         except AssertionError as e:
-            await message.answer(str(e))
+            await message.delete()
+            await delete_message_from_state(state)
+
+            error_message = await message.answer(str(e))
+            await state.update_data(previous_message=error_message)
+
             return
 
-        await state.update_data(value=validated_value)
+        await state.update_data(value=validated_value, successfully=True)
     elif column == "age":
         try:
             validated_age = User().validate_age(key="age", value=value)
         except AssertionError as e:
-            await message.answer(str(e))
+            await message.delete()
+            await delete_message_from_state(state)
+
+            error_message = await message.answer(str(e))
+            await state.update_data(previous_message=error_message)
+
             return
 
-        await state.update_data(value=validated_age)
+        await state.update_data(value=validated_age, successfully=True)
     elif column == "bio":
         if value == "/skip":
-            await state.update_data(value=None)
+            await state.update_data(value=None, successfully=True)
+            await delete_message_from_state(state)
         else:
             try:
                 validated_bio = User().validate_bio(key="bio", value=value)
             except AssertionError as e:
-                await message.answer(str(e))
+                await message.delete()
+                await delete_message_from_state(state)
+
+                error_message = await message.answer(str(e))
+                await state.update_data(previous_message=error_message)
+
                 return
 
-            await state.update_data(value=validated_bio)
+            await state.update_data(value=validated_bio, successfully=True)
     elif column == "sex":
         value = value.lower()
 
-        if value not in ["male", "female"]:
-            await message.answer(messages.VALIDATION_ERROR_MESSAGE)
+        try:
+            validated_sex = User().validate_sex(key="sex", value=value)
+        except AssertionError as e:
+            await message.delete()
+            await delete_message_from_state(state)
+
+            error_message = await message.answer(str(e))
+            await state.update_data(previous_message=error_message)
+
             return
 
-        await state.update_data(value=value)
+        await state.update_data(value=validated_sex, successfully=True)
     elif column == "location":
         location = value.split(", ")
+
         if len(location) != 2:
-            await message.answer(messages.VALIDATION_ERROR_MESSAGE)
+            await message.delete()
+            await delete_message_from_state(state)
+
+            error_message = await message.answer(
+                messages.VALIDATION_ERROR_MESSAGE,
+            )
+            await state.update_data(previous_message=error_message)
+
             return
 
         country, city = location
@@ -112,7 +144,12 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
                 value=country,
             )
         except AssertionError as e:
-            await message.answer(str(e))
+            await message.delete()
+            await delete_message_from_state(state)
+
+            error_message = await message.answer(str(e))
+            await state.update_data(previous_message=error_message)
+
             return
 
         try:
@@ -121,10 +158,19 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
                 country=validated_country,
             )
         except AssertionError as e:
-            await message.answer(str(e))
+            await message.delete()
+            await delete_message_from_state(state)
+
+            error_message = await message.answer(str(e))
+            await state.update_data(previous_message=error_message)
+
             return
 
+        await delete_message_from_state(state)
+
         await state.update_data(value=[validated_country, validated_city])
+
+    await delete_message_from_state(state)
 
     state_data = await state.get_data()
 
@@ -163,8 +209,9 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
     except TelegramBadRequest:
         pass
 
+    await message.delete()
     await message.answer(
-        "✅ Profile updated",
+        messages.PROFILE_UPDATED,
         reply_markup=ReplyKeyboardRemove(),
     )
 
