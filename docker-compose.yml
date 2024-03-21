@@ -38,7 +38,7 @@ services:
       redis:
         condition: service_healthy
     environment:
-      BOT_TOKEN: ${BOT_TOKEN}
+      BOT_TOKEN: 6943803094:AAEHG-vOP2pNEuxb9rDIhisiQuGLuBIjx1Q
       REDIS_URL: redis://redis:6379/
       SQLALCHEMY_DATABASE_URI: postgresql://postgres:wTAb5KoZ4dBtscg@postgres:5432/postgres
     entrypoint: ["bash", "-c"]

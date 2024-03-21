@@ -120,7 +120,7 @@ Our app uses docker compose for production deployment.
 travel_agent /
     postgres
     redis
-    bot
+    app
     pgadmin
 ```
 
