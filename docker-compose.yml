@@ -31,7 +31,7 @@ services:
 
   app:
     build: .
-    container_name: bot
+    container_name: app
     depends_on:
       postgres:
         condition: service_healthy
