@@ -13,9 +13,9 @@ class UserRegistration(StatesGroup):
 
 
 class UserAltering(StatesGroup):
-    column = State()
-    value = State()
     profile_message_id = State()
     input_message_id = State()
     error_message_id = State()
     successfully = State()
+    column = State()
+    value = State()

@@ -17,7 +17,13 @@ Base: Any = declarative_base()
 class User(Base):
     __tablename__ = "users"
 
-    telegram_id = sa.Column(sa.BigInteger, primary_key=True, index=True)
+    telegram_id = sa.Column(
+        sa.BigInteger,
+        primary_key=True,
+        index=True,
+        unique=True,
+        nullable=False,
+    )
     username = sa.Column(sa.String(32), nullable=False, unique=True)
     age = sa.Column(sa.SmallInteger, nullable=False)
     bio = sa.Column(sa.String(100), nullable=True)
