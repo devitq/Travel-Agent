@@ -8,7 +8,7 @@ from aiogram.types import Message, ReplyKeyboardRemove
 from app import messages, session
 from app.keyboards.builders import sex_keyboard
 from app.models.user import User
-from app.states.user import UserRegistration
+from app.states.user import UserRegistrationState
 from app.utils.states import (
     delete_message_from_state,
     handle_validation_error,
@@ -38,11 +38,11 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
             ),
         )
 
-        await state.set_state(UserRegistration.username)
+        await state.set_state(UserRegistrationState.username)
         await message.answer(messages.INPUT_USERNAME)
 
 
-@router.message(UserRegistration.username, F.text)
+@router.message(UserRegistrationState.username, F.text)
 async def username_handler(message: Message, state: FSMContext) -> None:
     if message.text is None:
         return
@@ -62,7 +62,7 @@ async def username_handler(message: Message, state: FSMContext) -> None:
     await delete_message_from_state(state, message.chat.id, message.bot)
 
     await state.update_data(username=validated_username)
-    await state.set_state(UserRegistration.age)
+    await state.set_state(UserRegistrationState.age)
 
     await message.answer(
         messages.INPUT_CALLBACK.format(
@@ -73,7 +73,7 @@ async def username_handler(message: Message, state: FSMContext) -> None:
     await message.answer(messages.INPUT_AGE)
 
 
-@router.message(UserRegistration.age, F.text)
+@router.message(UserRegistrationState.age, F.text)
 async def age_handler(message: Message, state: FSMContext) -> None:
     if message.text is None:
         return
@@ -90,7 +90,7 @@ async def age_handler(message: Message, state: FSMContext) -> None:
     await delete_message_from_state(state, message.chat.id, message.bot)
 
     await state.update_data(age=validated_age)
-    await state.set_state(UserRegistration.sex)
+    await state.set_state(UserRegistrationState.sex)
 
     await message.answer(
         messages.INPUT_CALLBACK.format(key="age", value=validated_age),
@@ -101,7 +101,7 @@ async def age_handler(message: Message, state: FSMContext) -> None:
     )
 
 
-@router.message(UserRegistration.sex, F.text)
+@router.message(UserRegistrationState.sex, F.text)
 async def sex_handler(message: Message, state: FSMContext) -> None:
     if message.text is None:
         return
@@ -118,7 +118,7 @@ async def sex_handler(message: Message, state: FSMContext) -> None:
     await delete_message_from_state(state, message.chat.id, message.bot)
 
     await state.update_data(sex=validated_sex)
-    await state.set_state(UserRegistration.bio)
+    await state.set_state(UserRegistrationState.bio)
 
     await message.answer(
         messages.INPUT_CALLBACK.format(key="sex", value=sex),
@@ -127,7 +127,7 @@ async def sex_handler(message: Message, state: FSMContext) -> None:
     await message.answer(messages.INPUT_BIO)
 
 
-@router.message(UserRegistration.bio, F.text)
+@router.message(UserRegistrationState.bio, F.text)
 async def bio_handler(message: Message, state: FSMContext) -> None:
     if message.text is None:
         return
@@ -136,7 +136,7 @@ async def bio_handler(message: Message, state: FSMContext) -> None:
 
     if bio == "/skip":
         await state.update_data(bio=None)
-        await state.set_state(UserRegistration.location)
+        await state.set_state(UserRegistrationState.location)
 
         await delete_message_from_state(state, message.chat.id, message.bot)
 
@@ -153,7 +153,7 @@ async def bio_handler(message: Message, state: FSMContext) -> None:
         await delete_message_from_state(state, message.chat.id, message.bot)
 
         await state.update_data(bio=validated_bio)
-        await state.set_state(UserRegistration.location)
+        await state.set_state(UserRegistrationState.location)
 
         await message.answer(
             messages.INPUT_CALLBACK.format(key="bio", value=validated_bio),
@@ -161,7 +161,7 @@ async def bio_handler(message: Message, state: FSMContext) -> None:
         await message.answer(messages.INPUT_LOCATION)
 
 
-@router.message(UserRegistration.location, F.text)
+@router.message(UserRegistrationState.location, F.text)
 async def location_handler(message: Message, state: FSMContext) -> None:
     if message.text is None or message.from_user is None:
         return

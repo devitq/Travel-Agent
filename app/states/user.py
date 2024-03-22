@@ -1,9 +1,9 @@
-__all__ = ("UserRegistration", "UserAltering")
+__all__ = ("UserRegistrationState", "UserAlteringState")
 
 from aiogram.fsm.state import State, StatesGroup
 
 
-class UserRegistration(StatesGroup):
+class UserRegistrationState(StatesGroup):
     error_message_id = State()
     username = State()
     age = State()
@@ -12,7 +12,7 @@ class UserRegistration(StatesGroup):
     location = State()
 
 
-class UserAltering(StatesGroup):
+class UserAlteringState(StatesGroup):
     profile_message_id = State()
     input_message_id = State()
     error_message_id = State()

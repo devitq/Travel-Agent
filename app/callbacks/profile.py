@@ -12,7 +12,7 @@ from app.filters.user import Registered, RegisteredCallback
 from app.keyboards.builders import sex_keyboard
 from app.keyboards.profile import get
 from app.models.user import User
-from app.states.user import UserAltering
+from app.states.user import UserAlteringState
 from app.utils.states import (
     delete_message_from_state,
     handle_validation_error,
@@ -63,12 +63,12 @@ async def profile_change_callback(
         profile_message_id=callback.message.message_id,
         input_message_id=message.message_id,
     )
-    await state.set_state(UserAltering.value)
+    await state.set_state(UserAlteringState.value)
 
     await callback.answer()
 
 
-@router.message(UserAltering.value, F.text, Registered())
+@router.message(UserAlteringState.value, F.text, Registered())
 async def profile_change_entered(message: Message, state: FSMContext) -> None:
     column = (await state.get_data()).get("column")
     value = message.text.strip()
