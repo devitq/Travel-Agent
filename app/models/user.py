@@ -1,18 +1,14 @@
 __all__ = ("User",)
 
 import re
-from typing import Any
 
 import sqlalchemy as sa
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import validates
+from sqlalchemy.orm import relationship, validates
 
 from app import session
+from app.models import Base
 from app.utils import geo
 from app.utils.db import utcnow
-
-
-Base: Any = declarative_base()
 
 
 class User(Base):
@@ -37,6 +33,9 @@ class User(Base):
         nullable=False,
         server_default=utcnow(),
     )
+
+    notes = relationship("Note", backref="author")
+    owned_travels = relationship("Travel", backref="author")
 
     @validates("username")
     def validate_username(self, key, value):
@@ -97,6 +96,9 @@ class User(Base):
         assert verdict, "There is no such city in selected country."
 
         return normalized_value
+
+    def get_user_travels(self):
+        return self.owned_travels + self.travels
 
     def get_human_readable_datejoined(self):
         return self.date_joined.strftime("%Y-%m-%d %H:%M:%S")

@@ -2,10 +2,34 @@
 
 MENU = "<b>Menu:</b>"
 
+TRAVELS = "📃 <b>Travels:</b>"
+NO_TRAVELS = "No travels yet. You can create one with /create_travel command."
+CREATE_TRAVEL = "🧳 Let's create new travel!\n<i>Enter /cancel to cancel creating.</i>"
+INPUT_TRAVEL_TITLE = "Enter travel title:\n<i>Maximum length: 30 characters</i>"
+INPUT_TRAVEL_CALLBACK = (
+    "All right, travel <b>{key}</b> is set to: <b>{value}</b>"
+)
+INPUT_TRAVEL_DESCRIPTION = (
+    "Enter travel description (enter /skip if you want to skip this step):\n<i>Maximum length: 100 characters</i>"
+)
+INPUT_TRAVEL_DESCRIPTION_SKIPPED = "Sure. You can always fill it later."
+TRAVEL_CREATED = "Travel <b>{title}</b> successfully created! You can now view and edit it in the travels list (/travels command)."
+ACTION_CANCELED = "❌ Action canceled"
+
 WELCOME_MESSAGE = "Hello, <b>{name}</b>! Welcome to the ✈️ Travel Agent bot! Let's start our journey by filling out some information about you."
 WELCOME_AGAIN_MESSAGE = "Hello, <b>{name}</b>! Welcome back to the ✈️ Travel Agent bot! If you get lost, you can always call the /help command for assistance."
 
-HELP_MESSAGE = "Help message text."
+HELP_MESSAGE = (
+    "Welcome to the ✈️ Travel Agent bot! Here is list of commands you can use:\n\n"
+    "/start - Start the bot\n"
+    "/help - Show this message\n"
+    "/menu - Show the main menu\n"
+    "/profile - View and edit your profile\n"
+    "/create_travel - Create new travel\n"
+    "/travels - View and edit your travels\n"
+    "/cancel - Cancel the current action\n\n"
+    "❓ If you have any questions/issues, feel free to contact us via @itq_travel_agent_support_bot on Telegram."
+)
 
 REGISTERED_MESSAGE = "You have successfully registered. Welcome to the ✈️ Travel Agent bot! \nYou can view and edit your profile using the /profile command."
 
@@ -27,7 +51,7 @@ PROFILE = (
     "\tCountry: <b>{country}</b>\n"
     "\tCity: <b>{city}</b>\n"
     "\tBio: <b>{bio}</b>\n"
-    "\tDate joined: <b>{date_joined}</b>\n"
+    "\tDate joined: <b>{date_joined} UTC</b>\n"
 )
 NOT_SET = "<i>Not set</i>"
 EDIT_USERNAME = "Enter your username:\n<i>Allowed characters: a-z, A-Z, 0-9, _</i>\n<i>Length: 5-20 characters</i>"

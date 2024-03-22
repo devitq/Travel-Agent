@@ -6,13 +6,15 @@ from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.redis import RedisStorage
 
-from app.callbacks import menu, profile
+from app.callbacks import menu, profile, travels
 from app.config import Config
 from app.handlers import (
+    create_travel_command,
     help_command,
     menu_command,
     profile_command,
     start_command,
+    travels_command,
 )
 from app.middlewares.throttling import ThrottlingMiddleware
 
@@ -34,8 +36,12 @@ async def main() -> None:
         help_command.router,
         menu_command.router,
         profile_command.router,
+        create_travel_command.router,
+        travels_command.router,
+
         menu.router,  # type: ignore
         profile.router,  # type: ignore
+        travels.router,  # type: ignore
     )
 
     await bot.delete_webhook(drop_pending_updates=True)

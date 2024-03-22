@@ -17,3 +17,4 @@ class Config:
         "REDIS_URL",
         "redis://localhost:6379",
     )
+    PAGE_SIZE = 6
