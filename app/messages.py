@@ -1,5 +1,7 @@
 # flake8: noqa
 
+MENU = "<b>Menu:</b>"
+
 WELCOME_MESSAGE = "Hello, <b>{name}</b>! Welcome to the ✈️ Travel Agent bot! Let's start our journey by filling out some information about you."
 WELCOME_AGAIN_MESSAGE = "Hello, <b>{name}</b>! Welcome back to the ✈️ Travel Agent bot! If you get lost, you can always call the /help command for assistance."
 
