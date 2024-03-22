@@ -180,6 +180,7 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
             successfully=True,
         )
 
+    await message.delete()
     await delete_message_from_state(state, message.chat.id, message.bot)
 
     state_data = await state.get_data()
@@ -220,7 +221,6 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
     except TelegramBadRequest:
         pass
 
-    await message.delete()
     await message.answer(
         messages.PROFILE_UPDATED,
         reply_markup=ReplyKeyboardRemove(),

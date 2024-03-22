@@ -1,7 +1,7 @@
 __all__ = ()
 
 from aiogram import F, Router
-from aiogram.filters import CommandStart
+from aiogram.filters import CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
 
@@ -18,7 +18,7 @@ from app.utils.states import (
 router = Router(name="start_command")
 
 
-@router.message(CommandStart())
+@router.message(CommandStart(), StateFilter(None))
 async def command_start_handler(message: Message, state: FSMContext) -> None:
     if message.from_user is None:
         return

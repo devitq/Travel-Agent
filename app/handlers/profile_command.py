@@ -1,7 +1,7 @@
 __all__ = ()
 
 from aiogram import Router
-from aiogram.filters import Command
+from aiogram.filters import Command, StateFilter
 from aiogram.types import Message
 
 from app import messages
@@ -13,7 +13,7 @@ from app.models.user import User
 router = Router(name="profile_command")
 
 
-@router.message(Command("profile"), Registered())
+@router.message(Command("profile"), Registered(), StateFilter(None))
 async def command_profile_handler(message: Message) -> None:
     if message.from_user is None:
         return
