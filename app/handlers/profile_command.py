@@ -28,6 +28,7 @@ async def command_profile_handler(message: Message) -> None:
             sex=user.sex.capitalize(),
             country=user.country,
             city=user.city,
+            date_joined=user.get_human_readable_datejoined(),
         ),
         reply_markup=get(),
     )

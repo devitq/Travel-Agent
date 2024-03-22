@@ -211,6 +211,7 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
                 sex=user.sex.capitalize(),
                 country=user.country,
                 city=user.city,
+                date_joined=user.get_human_readable_datejoined(),
             ),
             message.chat.id,
             state_data["profile_message_id"],

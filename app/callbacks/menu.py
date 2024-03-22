@@ -29,6 +29,7 @@ async def profile_callback(callback: CallbackQuery) -> None:
             sex=user.sex.capitalize(),
             country=user.country,
             city=user.city,
+            date_joined=user.get_human_readable_datejoined(),
         ),
         reply_markup=get(),
     )

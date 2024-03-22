@@ -9,6 +9,7 @@ from sqlalchemy.orm import validates
 
 from app import session
 from app.utils import geo
+from app.utils.db import utcnow
 
 
 Base: Any = declarative_base()
@@ -23,6 +24,7 @@ class User(Base):
         index=True,
         unique=True,
         nullable=False,
+        autoincrement=False,
     )
     username = sa.Column(sa.String(32), nullable=False, unique=True)
     age = sa.Column(sa.SmallInteger, nullable=False)
@@ -30,6 +32,11 @@ class User(Base):
     sex = sa.Column(sa.String(6), nullable=True)
     country = sa.Column(sa.Text, nullable=False)
     city = sa.Column(sa.Text, nullable=False)
+    date_joined = sa.Column(
+        sa.DateTime(timezone=True),
+        nullable=False,
+        server_default=utcnow(),
+    )
 
     @validates("username")
     def validate_username(self, key, value):
@@ -90,6 +97,9 @@ class User(Base):
         assert verdict, "There is no such city in selected country."
 
         return normalized_value
+
+    def get_human_readable_datejoined(self):
+        return self.date_joined.strftime("%Y-%m-%d %H:%M:%S")
 
     @classmethod
     def get_user_queryset_by_telegram_id(cls, telegram_id):

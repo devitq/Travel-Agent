@@ -27,6 +27,7 @@ PROFILE = (
     "\tCountry: <b>{country}</b>\n"
     "\tCity: <b>{city}</b>\n"
     "\tBio: <b>{bio}</b>\n"
+    "\tDate joined: <b>{date_joined}</b>\n"
 )
 NOT_SET = "<i>Not set</i>"
 EDIT_USERNAME = "Enter your username:\n<i>Allowed characters: a-z, A-Z, 0-9, _</i>\n<i>Length: 5-20 characters</i>"
