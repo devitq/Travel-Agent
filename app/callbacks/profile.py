@@ -60,7 +60,7 @@ async def profile_change_callback(
 
     await state.update_data(
         column=column,
-        message_id=callback.message.message_id,
+        profile_message_id=callback.message.message_id,
         input_message_id=message.message_id,
     )
     await state.set_state(UserAltering.value)
