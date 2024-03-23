@@ -1,10 +1,9 @@
-__all__ = ()
+__all__ = ("router",)
 
 from aiogram import Router
 from aiogram.filters import Command, StateFilter
 from aiogram.types import Message
 
-from app import messages
 from app.filters.user import Registered
 from app.keyboards.profile import get
 from app.models.user import User
@@ -21,14 +20,6 @@ async def command_profile_handler(message: Message) -> None:
     user = User().get_user_by_telegram_id(message.from_user.id)
 
     await message.answer(
-        messages.PROFILE.format(
-            username=user.username,
-            age=user.age,
-            bio=user.bio if user.bio else messages.NOT_SET,
-            sex=user.sex.capitalize(),
-            country=user.country,
-            city=user.city,
-            date_joined=user.get_human_readable_datejoined(),
-        ),
+        user.get_profile_text(),
         reply_markup=get(),
     )

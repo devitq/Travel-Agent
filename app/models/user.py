@@ -5,7 +5,7 @@ import re
 import sqlalchemy as sa
 from sqlalchemy.orm import relationship, validates
 
-from app import session
+from app import messages, session
 from app.models import Base
 from app.utils import geo
 from app.utils.db import utcnow
@@ -97,11 +97,22 @@ class User(Base):
 
         return normalized_value
 
-    def get_user_travels(self):
+    def get_user_travels(self) -> list:
         return self.owned_travels + self.travels
 
-    def get_human_readable_datejoined(self):
+    def get_human_readable_datejoined(self) -> str:
         return self.date_joined.strftime("%Y-%m-%d %H:%M:%S")
+
+    def get_profile_text(self) -> str:
+        return messages.PROFILE.format(
+            username=self.username,
+            age=self.age,
+            bio=self.bio if self.bio else messages.NOT_SET,
+            sex=self.sex.capitalize(),
+            country=self.country,
+            city=self.city,
+            date_joined=self.get_human_readable_datejoined(),
+        )
 
     @classmethod
     def get_user_queryset_by_telegram_id(cls, telegram_id):

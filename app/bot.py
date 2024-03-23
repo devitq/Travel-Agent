@@ -38,10 +38,9 @@ async def main() -> None:
         profile_command.router,
         create_travel_command.router,
         travels_command.router,
-
-        menu.router,  # type: ignore
-        profile.router,  # type: ignore
-        travels.router,  # type: ignore
+        menu.router,
+        profile.router,
+        travels.router,
     )
 
     await bot.delete_webhook(drop_pending_updates=True)

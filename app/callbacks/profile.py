@@ -1,5 +1,4 @@
-# type: ignore
-__all__ = ()
+__all__ = ("router",)
 
 from aiogram import F, Router
 from aiogram.exceptions import TelegramBadRequest
@@ -31,7 +30,11 @@ async def profile_change_callback(
     callback: CallbackQuery,
     state: FSMContext,
 ) -> None:
-    if callback.data is None or callback.message is None:
+    if (
+        callback.data is None
+        or callback.message is None
+        or not isinstance(callback.message, Message)
+    ):
         return
 
     column = callback.data.replace("profile_change_", "")
@@ -70,6 +73,13 @@ async def profile_change_callback(
 
 @router.message(UserAlteringState.value, F.text, Registered())
 async def profile_change_entered(message: Message, state: FSMContext) -> None:
+    if (
+        message.text is None
+        or message.from_user is None
+        or message.bot is None
+    ):
+        return
+
     column = (await state.get_data()).get("column")
     value = message.text.strip()
 
@@ -205,15 +215,7 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
 
     try:
         await message.bot.edit_message_text(
-            messages.PROFILE.format(
-                username=user.username,
-                age=user.age,
-                bio=user.bio if user.bio else messages.NOT_SET,
-                sex=user.sex.capitalize(),
-                country=user.country,
-                city=user.city,
-                date_joined=user.get_human_readable_datejoined(),
-            ),
+            user.get_profile_text(),
             message.chat.id,
             state_data["profile_message_id"],
             reply_markup=get(),

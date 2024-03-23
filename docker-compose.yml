@@ -3,7 +3,7 @@ version: "3"
 
 services:
   postgres:
-    image: postgres:latest
+    image: postgres:16.2-alpine
     container_name: postgres
     healthcheck:
       test: pg_isready -U postgres -h localhost
@@ -11,21 +11,21 @@ services:
       timeout: 5s
       retries: 10
     environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: wTAb5KoZ4dBtscg
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
   redis:
-    image: redis:latest
+    image: redis:7.2-alpine
     container_name: redis
     healthcheck:
       test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT:-6379}:6379"
     volumes:
       - redis_data:/data
 
@@ -38,20 +38,23 @@ services:
       redis:
         condition: service_healthy
     environment:
-      BOT_TOKEN: 6943803094:AAEHG-vOP2pNEuxb9rDIhisiQuGLuBIjx1Q
-      REDIS_URL: redis://redis:6379/
-      SQLALCHEMY_DATABASE_URI: postgresql://postgres:wTAb5KoZ4dBtscg@postgres:5432/postgres
+      BOT_TOKEN: ${BOT_TOKEN:-6943803094:AAEHG-vOP2pNEuxb9rDIhisiQuGLuBIjx1Q}
+      REDIS_URL: redis://redis:${REDIS_PORT:-6379}/
+      SQLALCHEMY_DATABASE_URI: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-postgres}
     entrypoint: ["bash", "-c"]
     command: ["alembic -c app/alembic.ini upgrade head && python -m app"]
 
   pgadmin:
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:8.4
     container_name: pgadmin
+    depends_on:
+      postgres:
+        condition: service_healthy
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@mail.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@mail.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
     ports:
-      - "5050:80"
+      - "${PGADMIN_PORT:-5050}:80"
     restart: always
     volumes:
       - pgadmin_data:/var/lib/pgadmin

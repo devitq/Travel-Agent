@@ -4,4 +4,4 @@ sort-requirements
 
 -r prod.txt
 -r test.txt
--r lints.txt
+-r lint.txt

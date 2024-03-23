@@ -1,4 +1,4 @@
-__all__ = ()
+__all__ = ("router",)
 
 from aiogram import Router
 from aiogram.filters import Command, StateFilter

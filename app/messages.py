@@ -4,14 +4,16 @@ MENU = "<b>Menu:</b>"
 
 TRAVELS = "📃 <b>Travels:</b>"
 NO_TRAVELS = "No travels yet. You can create one with /create_travel command."
-CREATE_TRAVEL = "🧳 Let's create new travel!\n<i>Enter /cancel to cancel creating.</i>"
-INPUT_TRAVEL_TITLE = "Enter travel title:\n<i>Maximum length: 30 characters</i>"
+CREATE_TRAVEL = (
+    "🧳 Let's create new travel!\n<i>Enter /cancel to cancel creating.</i>"
+)
+INPUT_TRAVEL_TITLE = (
+    "Enter travel title:\n<i>Maximum length: 30 characters</i>"
+)
 INPUT_TRAVEL_CALLBACK = (
     "All right, travel <b>{key}</b> is set to: <b>{value}</b>"
 )
-INPUT_TRAVEL_DESCRIPTION = (
-    "Enter travel description (enter /skip if you want to skip this step):\n<i>Maximum length: 100 characters</i>"
-)
+INPUT_TRAVEL_DESCRIPTION = "Enter travel description (enter /skip if you want to skip this step):\n<i>Maximum length: 100 characters</i>"
 INPUT_TRAVEL_DESCRIPTION_SKIPPED = "Sure. You can always fill it later."
 TRAVEL_CREATED = "Travel <b>{title}</b> successfully created! You can now view and edit it in the travels list (/travels command)."
 ACTION_CANCELED = "❌ Action canceled"

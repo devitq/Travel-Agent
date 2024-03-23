@@ -1,9 +1,7 @@
 # Files
 README.md
-task.md
 check.sh
 .flake8
-template.env
 
 # Folders
 img/

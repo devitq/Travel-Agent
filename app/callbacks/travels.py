@@ -1,10 +1,9 @@
-# type: ignore
-__all__ = ()
+__all__ = ("router",)
 
 from aiogram import F, Router
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import StateFilter
-from aiogram.types import CallbackQuery
+from aiogram.types import CallbackQuery, Message
 
 from app import messages
 from app.config import Config
@@ -17,9 +16,14 @@ router = Router(name="menu_callback")
 
 
 @router.callback_query(
-    F.data.startswith("travels_page"), RegisteredCallback(), StateFilter(None),
+    F.data.startswith("travels_page"),
+    RegisteredCallback(),
+    StateFilter(None),
 )
 async def travels_callback(callback: CallbackQuery) -> None:
+    if callback.data is None or not isinstance(callback.message, Message):
+        return
+
     page = int(callback.data.replace("travels_page_", ""))
 
     user = User().get_user_by_telegram_id(callback.from_user.id)
