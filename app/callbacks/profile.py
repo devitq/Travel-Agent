@@ -152,11 +152,20 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
     elif column == "location":
         location = value.split(", ")
 
+        proccessing_message = await message.answer(messages.PROCCESSING)
+
         if len(location) != 2:
-            await handle_validation_error(
-                message,
+            await delete_message_from_state(
                 state,
-                messages.VALIDATION_ERROR,
+                message.chat.id,
+                message.bot,
+            )
+            await proccessing_message.edit_text(messages.VALIDATION_ERROR)
+            await message.delete()
+
+            error_message = proccessing_message
+            await state.update_data(
+                error_message_id=error_message.message_id,
             )
 
             return
@@ -169,7 +178,18 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
                 value=country,
             )
         except AssertionError as e:
-            await handle_validation_error(message, state, e)
+            await delete_message_from_state(
+                state,
+                message.chat.id,
+                message.bot,
+            )
+            await proccessing_message.edit_text("❌ " + str(e))
+            await message.delete()
+
+            error_message = proccessing_message
+            await state.update_data(
+                error_message_id=error_message.message_id,
+            )
 
             return
 
@@ -179,7 +199,18 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
                 country=validated_country,
             )
         except AssertionError as e:
-            await handle_validation_error(message, state, e)
+            await delete_message_from_state(
+                state,
+                message.chat.id,
+                message.bot,
+            )
+            await proccessing_message.edit_text("❌ " + str(e))
+            await message.delete()
+
+            error_message = proccessing_message
+            await state.update_data(
+                error_message_id=error_message.message_id,
+            )
 
             return
 
@@ -204,6 +235,11 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
                 "city": state_data["value"][1],
             },
         )
+
+        try:
+            await proccessing_message.delete()
+        except TelegramBadRequest:
+            pass
     else:
         data = {state_data["column"]: state_data["value"]}
         user.update(data)

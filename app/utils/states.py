@@ -56,7 +56,7 @@ async def handle_validation_error(
         message.bot,
     )
 
-    error_message = await message.answer(str(e))
+    error_message = await message.answer("❌ " + str(e))
     await state.update_data(
         error_message_id=error_message.message_id,
     )

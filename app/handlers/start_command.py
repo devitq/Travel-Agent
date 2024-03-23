@@ -1,6 +1,7 @@
 __all__ = ("router",)
 
 from aiogram import F, Router
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
@@ -166,13 +167,22 @@ async def location_handler(message: Message, state: FSMContext) -> None:
     if message.text is None or message.from_user is None:
         return
 
+    proccessing_message = await message.answer(messages.PROCCESSING)
+
     location = message.text.strip().split(", ")
 
     if len(location) != 2:
-        await handle_validation_error(
-            message,
+        await delete_message_from_state(
             state,
-            messages.VALIDATION_ERROR,
+            message.chat.id,
+            message.bot,
+        )
+        await proccessing_message.edit_text(messages.VALIDATION_ERROR)
+        await message.delete()
+
+        error_message = proccessing_message
+        await state.update_data(
+            error_message_id=error_message.message_id,
         )
 
         return
@@ -185,7 +195,18 @@ async def location_handler(message: Message, state: FSMContext) -> None:
             value=country,
         )
     except AssertionError as e:
-        await handle_validation_error(message, state, e)
+        await delete_message_from_state(
+            state,
+            message.chat.id,
+            message.bot,
+        )
+        await proccessing_message.edit_text("❌ " + str(e))
+        await message.delete()
+
+        error_message = proccessing_message
+        await state.update_data(
+            error_message_id=error_message.message_id,
+        )
 
         return
 
@@ -195,9 +216,25 @@ async def location_handler(message: Message, state: FSMContext) -> None:
             country=validated_country,
         )
     except AssertionError as e:
-        await handle_validation_error(message, state, e)
+        await delete_message_from_state(
+            state,
+            message.chat.id,
+            message.bot,
+        )
+        await proccessing_message.edit_text("❌ " + str(e))
+        await message.delete()
+
+        error_message = proccessing_message
+        await state.update_data(
+            error_message_id=error_message.message_id,
+        )
 
         return
+
+    try:
+        await proccessing_message.delete()
+    except TelegramBadRequest:
+        pass
 
     await delete_message_from_state(state, message.chat.id, message.bot)
 

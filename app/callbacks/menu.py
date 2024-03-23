@@ -93,8 +93,17 @@ async def travels_callback(
 
         await callback.message.answer(
             messages.TRAVELS,
-            reply_markup=travels_keyboard(travels, page, pages),
+            reply_markup=travels_keyboard(
+                travels,
+                page,
+                pages,
+                user.telegram_id,
+            ),
         )
 
-    await callback.message.delete()
+    try:
+        await callback.message.delete()
+    except TelegramBadRequest:
+        pass
+
     await callback.answer()

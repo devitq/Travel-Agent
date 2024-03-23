@@ -32,5 +32,10 @@ async def command_help_handler(message: Message) -> None:
 
         await message.answer(
             messages.TRAVELS,
-            reply_markup=travels_keyboard(travels, page, pages),
+            reply_markup=travels_keyboard(
+                travels,
+                page,
+                pages,
+                user.telegram_id,
+            ),
         )

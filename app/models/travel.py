@@ -3,7 +3,7 @@ __all__ = ("Travel", "Location")
 import sqlalchemy as sa
 from sqlalchemy.orm import relationship, validates
 
-from app import session
+from app import messages, session
 from app.models import Base
 from app.models.user import User
 
@@ -55,6 +55,7 @@ class Travel(Base):
     @validates("title")
     def validate_title(self, key, value):
         assert len(value) <= 30, "Title must be 30 characters or fewer."
+        assert "👑" not in value, "👑 is not allowed symbol."
 
         if session.query(Travel).filter(Travel.title == value).first():
             raise AssertionError("This title is already taken.")
@@ -69,6 +70,16 @@ class Travel(Base):
             ), "Description must be 100 characters or fewer."
 
         return value
+
+    def get_travel_text(self):
+        return messages.TRAVEL_DETAIL.format(
+            title=self.title,
+            description=self.description,
+        )
+
+    @classmethod
+    def get_travel_by_id(cls, travel_id):
+        return session.query(Travel).filter(Travel.id == travel_id).first()
 
 
 class Location(Base):

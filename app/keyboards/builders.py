@@ -16,7 +16,7 @@ def sex_keyboard(choices: str | list):
     return builder.as_markup(resize_keyboard=True)
 
 
-def travels_keyboard(travels: list, page: int, pages: int):
+def travels_keyboard(travels: list, page: int, pages: int, user_id: int):
     builder = InlineKeyboardBuilder()
     rows = []
 
@@ -24,9 +24,14 @@ def travels_keyboard(travels: list, page: int, pages: int):
     end_index = min((page + 1) * Config.PAGE_SIZE, len(travels))
 
     for travel in travels[start_index:end_index]:
+        button_text = travel.title
+
+        if travel.author_id == user_id:
+            button_text += " 👑"
+
         rows.append(
             InlineKeyboardButton(
-                text=travel.title,
+                text=button_text,
                 callback_data=f"travel_detail_{travel.id}",
             ),
         )
