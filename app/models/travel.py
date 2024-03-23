@@ -74,12 +74,18 @@ class Travel(Base):
     def get_travel_text(self):
         return messages.TRAVEL_DETAIL.format(
             title=self.title,
-            description=self.description,
+            description=(
+                self.description if self.description else messages.NOT_SET
+            ),
         )
 
     @classmethod
     def get_travel_by_id(cls, travel_id):
         return session.query(Travel).filter(Travel.id == travel_id).first()
+
+    @classmethod
+    def get_travel_queryset_by_id(cls, travel_id):
+        return session.query(Travel).filter(Travel.id == travel_id)
 
 
 class Location(Base):

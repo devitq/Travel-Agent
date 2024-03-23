@@ -15,7 +15,7 @@ router = Router(name="travels_command")
 
 
 @router.message(Command("travels"), Registered(), StateFilter(None))
-async def command_help_handler(message: Message) -> None:
+async def command_travels_handler(message: Message) -> None:
     page = 0
 
     if message.from_user is None:

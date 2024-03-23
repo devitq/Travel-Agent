@@ -19,6 +19,16 @@ def get(travel_id: int):
     )
     builder.row(
         types.InlineKeyboardButton(
+            text="🗺️ Locations",
+            callback_data=f"travel_locations_{travel_id}",
+        ),
+        types.InlineKeyboardButton(
+            text="👤 Users",
+            callback_data=f"travel_users_{travel_id}",
+        ),
+    )
+    builder.row(
+        types.InlineKeyboardButton(
             text="➕ Add location",
             callback_data=f"travel_add_{travel_id}_location",
         ),
@@ -30,7 +40,7 @@ def get(travel_id: int):
     builder.row(
         types.InlineKeyboardButton(
             text="⬅️",
-            callback_data="menu_travels",
+            callback_data="travels",
         ),
     )
 

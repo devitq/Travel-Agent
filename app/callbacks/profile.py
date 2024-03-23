@@ -102,7 +102,7 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
 
     if column == "username":
         try:
-            validated_value = User().validate_username(
+            validated_title = User().validate_username(
                 key="username",
                 value=value,
             )
@@ -111,7 +111,7 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
 
             return
 
-        await state.update_data(value=validated_value, successfully=True)
+        await state.update_data(value=validated_title, successfully=True)
     elif column == "age":
         try:
             validated_age = User().validate_age(key="age", value=value)

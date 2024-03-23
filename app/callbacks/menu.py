@@ -1,7 +1,6 @@
 __all__ = ("router",)
 
 from aiogram import F, Router
-from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
@@ -35,11 +34,6 @@ async def profile_callback(callback: CallbackQuery) -> None:
     )
     await callback.answer()
 
-    try:
-        await callback.message.delete()
-    except TelegramBadRequest:
-        pass
-
 
 @router.callback_query(
     F.data == "menu_create_travel",
@@ -62,11 +56,6 @@ async def create_travel_callback(
     await state.set_state(TravelCreationState.title)
 
     await callback.answer()
-
-    try:
-        await callback.message.delete()
-    except TelegramBadRequest:
-        pass
 
 
 @router.callback_query(
@@ -100,10 +89,5 @@ async def travels_callback(
                 user.telegram_id,
             ),
         )
-
-    try:
-        await callback.message.delete()
-    except TelegramBadRequest:
-        pass
 
     await callback.answer()

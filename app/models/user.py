@@ -98,7 +98,8 @@ class User(Base):
         return normalized_value
 
     def get_user_travels(self) -> list:
-        return self.owned_travels + self.travels
+        all_travels = self.owned_travels + self.travels
+        return sorted(all_travels, key=lambda travel: travel.id)
 
     def get_human_readable_datejoined(self) -> str:
         return self.date_joined.strftime("%Y-%m-%d %H:%M:%S")

@@ -7,6 +7,8 @@ NO_TRAVELS = "No travels yet. You can create one with /create_travel command."
 CREATE_TRAVEL = (
     "🧳 Let's create new travel!\n<i>Enter /cancel to cancel creating.</i>"
 )
+TRAVEL_UPDATED = "✅ Travel updated"
+EDIT_TRAVEL_DESCRIPTION = "Enter travel description (enter /skip if you want to set it to None):\n<i>Maximum length: 100 characters</i>"
 INPUT_TRAVEL_TITLE = (
     "Enter travel title:\n<i>Maximum length: 30 characters</i>"
 )
