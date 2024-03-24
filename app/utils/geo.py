@@ -1,5 +1,5 @@
 # type: ignore
-__all__ = ("validate_country", "validate_city")
+__all__ = ("validate_country", "validate_city", "get_location_by_name")
 
 from geopy.exc import GeocoderTimedOut
 from geopy.geocoders import Nominatim
@@ -72,3 +72,24 @@ def validate_city(city: str, country: str):
         return True, normalized_country
 
     return False, None
+
+
+def get_location_by_name(location: str) -> None:
+    geolocator = Nominatim(user_agent="travel_agent_bot")
+
+    for _ in range(3):
+        try:
+            geocode = geolocator.geocode(
+                location,
+                featuretype="city",
+            )
+            break
+        except GeocoderTimedOut:
+            continue
+    else:
+        return False, None
+
+    if not geocode:
+        return False, None
+
+    return True, geocode

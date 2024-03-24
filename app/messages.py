@@ -2,6 +2,18 @@
 
 MENU = "<b>Menu:</b>"
 
+CREATE_LOCATION = "✈️ Lets create new location!"
+ENTER_LOCATION = "Enter location:"
+CONFIRM_LOCATION = "Is this location correct: <b>{location}</b>?"
+CONFIRMATION_REEJECTED = (
+    "❌ Confirmation rejected. Please re-enter the location."
+)
+ENTER_LOCATION_DATE_START = "Enter location start datetime(in UTC) in this format:\n<i>Format: YYYY-MM-DD HH:MM</i>\n<i>Example: 2022-01-01 00:00</i>"
+ENTER_LOCATION_DATE_END = "Enter location end datetime(in UTC) in this format:\n<i>Format: YYYY-MM-DD HH:MM</i>\n<i>Example: 2022-01-01 00:00</i>"
+INVALID_DATE_END = "End date can't be earlier or equal to start date."
+LOCATION_ADDED = "✅ Location added"
+
+DELETED_TRAVEL = "✅ Travel deleted"
 TRAVELS = "📃 <b>Travels:</b>\n<i>👑 - owner</i>"
 NO_TRAVELS = "No travels yet. You can create one with /create_travel command."
 CREATE_TRAVEL = (
@@ -21,6 +33,7 @@ TRAVEL_CREATED = "Travel <b>{title}</b> successfully created! You can now view a
 ACTION_CANCELED = "❌ Action canceled"
 TRAVEL_DETAIL = (
     "📝 <b>Travel detail</b>\n\n"
+    "\tID: <b>{travel_id}</b>\n"
     "\tTitle: <b>{title}</b>\n"
     "\tDescription: <b>{description}</b>\n"
 )

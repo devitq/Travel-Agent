@@ -1,8 +1,8 @@
 """Added travel models
 
-Revision ID: fe4ace4196fb
+Revision ID: 4dea8f302149
 Revises: 4914f00ae14a
-Create Date: 2024-03-22 19:19:36.662090
+Create Date: 2024-03-24 17:56:20.975589
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'fe4ace4196fb'
+revision: str = '4dea8f302149'
 down_revision: Union[str, None] = '4914f00ae14a'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -38,9 +38,9 @@ def upgrade() -> None:
     op.create_table(
         'locations',
         sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-        sa.Column('name', sa.Text(), nullable=False),
-        sa.Column('date_start', sa.Date(), nullable=False),
-        sa.Column('date_end', sa.Date(), nullable=False),
+        sa.Column('location', sa.Text(), nullable=False),
+        sa.Column('date_start', sa.DateTime(timezone=True), nullable=False),
+        sa.Column('date_end', sa.DateTime(timezone=True), nullable=False),
         sa.Column('travel_id', sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(
             ['travel_id'],

@@ -23,18 +23,34 @@ def get(travel_id: int):
             callback_data=f"travel_locations_{travel_id}",
         ),
         types.InlineKeyboardButton(
-            text="👤 Users",
-            callback_data=f"travel_users_{travel_id}",
+            text="➕ Add location",
+            callback_data=f"travel_add_location_{travel_id}",
         ),
     )
     builder.row(
         types.InlineKeyboardButton(
-            text="➕ Add location",
-            callback_data=f"travel_add_{travel_id}_location",
+            text="👤 Users",
+            callback_data=f"travel_users_{travel_id}",
         ),
         types.InlineKeyboardButton(
             text="➕ Add user",
-            callback_data=f"travel_add_{travel_id}_user",
+            callback_data=f"travel_add_user_{travel_id}",
+        ),
+    )
+    builder.row(
+        types.InlineKeyboardButton(
+            text="📝 Notes",
+            callback_data=f"travel_notes_{travel_id}",
+        ),
+        types.InlineKeyboardButton(
+            text="➕ Add note",
+            callback_data=f"travel_add_note_{travel_id}",
+        ),
+    )
+    builder.row(
+        types.InlineKeyboardButton(
+            text="❌ Delete travel",
+            callback_data=f"travel_delete_{travel_id}",
         ),
     )
     builder.row(

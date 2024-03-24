@@ -1,11 +1,14 @@
 __all__ = ("Travel", "Location")
 
+import datetime
+
 import sqlalchemy as sa
 from sqlalchemy.orm import relationship, validates
 
 from app import messages, session
 from app.models import Base
 from app.models.user import User
+from app.utils.geo import get_location_by_name
 
 
 association_table = sa.Table(
@@ -73,6 +76,7 @@ class Travel(Base):
 
     def get_travel_text(self):
         return messages.TRAVEL_DETAIL.format(
+            travel_id=self.id,
             title=self.title,
             description=(
                 self.description if self.description else messages.NOT_SET
@@ -98,15 +102,61 @@ class Location(Base):
         autoincrement=True,
         index=True,
     )
-    name = sa.Column(sa.Text, nullable=False)
-    date_start = sa.Column(sa.Date(), nullable=False)
-    date_end = sa.Column(sa.Date(), nullable=False)
+    location = sa.Column(sa.Text, nullable=False)
+    date_start = sa.Column(
+        sa.DateTime(timezone=True),
+        nullable=False,
+    )
+    date_end = sa.Column(
+        sa.DateTime(timezone=True),
+        nullable=False,
+    )
 
     travel_id = sa.Column(
         sa.Integer,
         sa.ForeignKey("travels.id"),
         nullable=False,
     )
+
+    @validates("location")
+    def validate_location(self, key, value):
+        geocoder = get_location_by_name(value)
+
+        assert geocoder[0], "Invalid location."
+
+        return geocoder[1].raw["display_name"]
+
+    def validate_date_start(self, key, value):
+        try:
+            value_datetime = datetime.datetime.strptime(
+                value,
+                "%Y-%m-%d %H:%M",
+            )
+            value_datetime = value_datetime.replace(tzinfo=datetime.UTC)
+        except ValueError:
+            raise AssertionError("Invalid datetime format.")
+
+        assert value_datetime >= datetime.datetime.now(
+            datetime.UTC,
+        ), "Invalid datetime."
+
+        return value_datetime
+
+    def validate_date_end(self, key, value):
+        try:
+            value_datetime = datetime.datetime.strptime(
+                value,
+                "%Y-%m-%d %H:%M",
+            )
+            value_datetime = value_datetime.replace(tzinfo=datetime.UTC)
+        except ValueError:
+            raise AssertionError("Invalid datetime format.")
+
+        assert value_datetime >= datetime.datetime.now(
+            datetime.UTC,
+        ), "Invalid datetime."
+
+        return value_datetime
 
 
 class Note(Base):

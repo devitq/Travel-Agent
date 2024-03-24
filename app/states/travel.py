@@ -17,3 +17,14 @@ class TravelAlteringState(StatesGroup):
     travel_id = State()
     column = State()
     value = State()
+
+
+class CreateLocationState(StatesGroup):
+    temp_location_message_id = State()
+    error_message_id = State()
+    travel_id = State()
+    location = State()
+    temp_location = State()
+    location = State()
+    date_start = State()
+    date_end = State()
