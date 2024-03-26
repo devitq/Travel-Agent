@@ -39,7 +39,7 @@ def get(travel_id: int, note):
     builder.row(
         types.InlineKeyboardButton(
             text="⬅️",
-            callback_data=f"travel_detail_{travel_id}",
+            callback_data=f"travel_notes_page_{travel_id}_0",
         ),
     )
 
