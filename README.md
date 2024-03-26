@@ -72,7 +72,7 @@ API to easily get current weather in specified location.
 
 ## 🖥️ Demonstration
 
-### 1. Registration
+### Registration
 
 ![Registration](/img/gifs/Registration.gif)
 
