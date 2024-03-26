@@ -7,258 +7,25 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
+import sqlalchemy as sa
 
 from app import messages, session
 from app.config import Config
 from app.filters.user import Registered, RegisteredCallback
-from app.keyboards.builders import travels_keyboard
+from app.keyboards.builders import locations_keyboard, sights_keyboard
 from app.keyboards.confirm_location import get as confirm_location_get
-from app.keyboards.travel import get as travel_get
+from app.keyboards.location import get as location_get
 from app.models.travel import Location, Travel
-from app.models.user import User
-from app.states.travel import CreateLocationState, TravelAlteringState
+from app.states.travel import (
+    CreateLocationState,
+)
+from app.utils.geo import get_location_by_name
+from app.utils.sights import find_trips, get_info_by_xid
 from app.utils.states import delete_message_from_state, handle_validation_error
+from app.utils.weather import get_current_weather
 
 
-router = Router(name="menu_callback")
-
-
-@router.callback_query(
-    F.data == "travels",
-    RegisteredCallback(),
-    StateFilter(None),
-)
-async def travels_index_callback(callback: CallbackQuery) -> None:
-    page = 0
-
-    if callback.from_user is None or not isinstance(callback.message, Message):
-        return
-
-    user = User().get_user_by_telegram_id(callback.from_user.id)
-
-    travels = user.get_user_travels()
-
-    if not travels or travels == []:
-        try:
-            await callback.message.edit_text(messages.NO_TRAVELS)
-        except TelegramBadRequest:
-            pass
-    else:
-        pages = (len(travels) + Config.PAGE_SIZE - 1) // Config.PAGE_SIZE
-
-        try:
-            await callback.message.edit_text(
-                messages.TRAVELS,
-                reply_markup=travels_keyboard(
-                    travels,
-                    page,
-                    pages,
-                    user.telegram_id,
-                ),
-            )
-        except TelegramBadRequest:
-            pass
-
-
-@router.callback_query(
-    F.data.startswith("travels_page"),
-    RegisteredCallback(),
-    StateFilter(None),
-)
-async def travels_callback(callback: CallbackQuery) -> None:
-    if callback.data is None or not isinstance(callback.message, Message):
-        return
-
-    page = int(callback.data.replace("travels_page_", ""))
-
-    user = User().get_user_by_telegram_id(callback.from_user.id)
-
-    travels = user.get_user_travels()
-
-    if not travels or travels == []:
-        try:
-            await callback.message.edit_text(messages.NO_TRAVELS)
-        except TelegramBadRequest:
-            pass
-    else:
-        pages = (len(travels) + Config.PAGE_SIZE - 1) // Config.PAGE_SIZE
-
-        try:
-            await callback.message.edit_text(
-                messages.TRAVELS,
-                reply_markup=travels_keyboard(
-                    travels,
-                    page,
-                    pages,
-                    user.telegram_id,
-                ),
-            )
-        except TelegramBadRequest:
-            pass
-
-
-@router.callback_query(
-    F.data.startswith("travel_detail"),
-    RegisteredCallback(),
-    StateFilter(None),
-)
-async def travel_detail_callback(callback: CallbackQuery) -> None:
-    if callback.data is None or not isinstance(callback.message, Message):
-        return
-
-    travel_id = int(callback.data.replace("travel_detail_", ""))
-
-    travel = Travel().get_travel_by_id(travel_id)
-
-    if not travel:
-        return
-
-    await callback.message.edit_text(
-        travel.get_travel_text(),
-        reply_markup=travel_get(travel_id),
-    )
-
-
-@router.callback_query(
-    F.data.startswith("travel_change"),
-    RegisteredCallback(),
-    StateFilter(None),
-)
-async def travel_change_callback(
-    callback: CallbackQuery,
-    state: FSMContext,
-) -> None:
-    if (
-        callback.data is None
-        or callback.message is None
-        or not isinstance(callback.message, Message)
-    ):
-        return
-
-    travel_id, column = callback.data.replace("travel_change_", "").split("_")
-
-    travel = Travel().get_travel_by_id(travel_id)
-
-    if not travel:
-        return
-
-    if column == "title":
-        message = await callback.message.answer(
-            f"{messages.INPUT_TRAVEL_TITLE}\n{messages.CANCEL_CHANGE}",
-        )
-    elif column == "description":
-        message = await callback.message.answer(
-            f"{messages.EDIT_TRAVEL_DESCRIPTION}\n{messages.CANCEL_CHANGE}",
-        )
-
-    await state.update_data(
-        column=column,
-        travel_message_id=callback.message.message_id,
-        input_message_id=message.message_id,
-        travel_id=travel_id,
-    )
-    await state.set_state(TravelAlteringState.value)
-
-    await callback.answer()
-
-
-@router.message(TravelAlteringState.value, F.text, Registered())
-async def travel_change_entered(message: Message, state: FSMContext) -> None:
-    if (
-        message.text is None
-        or message.from_user is None
-        or message.bot is None
-    ):
-        return
-
-    data = await state.get_data()
-
-    column = data["column"]
-    travel_id = data["travel_id"]
-    value = message.text.strip()
-
-    if value == "/cancel":
-        await message.answer(
-            messages.CHANGE_CANCELED,
-        )
-
-        await state.update_data(successfully=True)
-        await message.delete()
-        await delete_message_from_state(
-            state,
-            message.chat.id,
-            message.bot,
-        )
-        await state.clear()
-
-        return
-
-    if column == "title":
-        try:
-            validated_title = Travel().validate_title(
-                key="title",
-                value=value,
-            )
-        except AssertionError as e:
-            await handle_validation_error(message, state, e)
-
-            return
-
-        await state.update_data(value=validated_title, successfully=True)
-    elif column == "description":
-        if value == "/skip":
-            await state.update_data(value=None, successfully=True)
-            await delete_message_from_state(
-                state,
-                message.chat.id,
-                message.bot,
-            )
-        else:
-            try:
-                validated_description = Travel().validate_description(
-                    key="description",
-                    value=value,
-                )
-            except AssertionError as e:
-                await handle_validation_error(message, state, e)
-
-                return
-
-            await state.update_data(
-                value=validated_description,
-                successfully=True,
-            )
-
-    await message.delete()
-    await delete_message_from_state(state, message.chat.id, message.bot)
-
-    state_data = await state.get_data()
-
-    travel = Travel().get_travel_queryset_by_id(travel_id)
-
-    data = {state_data["column"]: state_data["value"]}
-    travel.update(data)
-
-    session.commit()
-
-    travel = travel.first()
-    session.refresh(travel)
-
-    try:
-        await message.bot.edit_message_text(
-            travel.get_travel_text(),
-            message.chat.id,
-            state_data["travel_message_id"],
-            reply_markup=travel_get(travel_id),
-        )
-    except TelegramBadRequest:
-        pass
-
-    await message.answer(
-        messages.TRAVEL_UPDATED,
-    )
-
-    await state.clear()
+router = Router(name="location_callback")
 
 
 @router.callback_query(
@@ -525,8 +292,6 @@ async def location_date_end_entered(
 
         return
 
-    await delete_message_from_state(state, message.chat.id, message.bot)
-
     await state.update_data(
         date_end=datetime.datetime.strftime(
             validated_date_end,
@@ -535,6 +300,35 @@ async def location_date_end_entered(
     )
 
     data = await state.get_data()
+
+    overlapping_location = (
+        session.query(Location)
+        .filter(
+            sa.and_(
+                Location.travel_id == data["travel_id"],
+                Location.date_start < data["date_end"],
+                Location.date_end > data["date_start"],
+            ),
+        )
+        .first()
+    )
+    if overlapping_location:
+        await handle_validation_error(
+            message,
+            state,
+            messages.OVERLAPPING_LOCATION,
+        )
+
+        return
+
+    await message.answer(
+        messages.INPUT_TRAVEL_CALLBACK.format(
+            key="end date",
+            value=date_end,
+        ),
+    )
+
+    await delete_message_from_state(state, message.chat.id, message.bot)
 
     if "temp_location" in data:
         del data["temp_location"]
@@ -566,26 +360,241 @@ async def location_date_end_entered(
 
 
 @router.callback_query(
-    F.data.startswith("travel_delete"),
+    F.data.startswith("travel_locations_page"),
     RegisteredCallback(),
     StateFilter(None),
 )
-async def delete_travel_callback(
+async def travel_locations_page_callback(
     callback: CallbackQuery,
 ):
-    if callback.data is None or not isinstance(callback.message, Message):
+    if (
+        callback.message is None
+        or callback.data is None
+        or not isinstance(callback.message, Message)
+    ):
         return
 
-    travel_id = int(callback.data.replace("travel_delete_", ""))
+    travel_id, page = map(
+        int,
+        callback.data.replace("travel_locations_page_", "").split("_"),
+    )
 
-    travel = Travel.get_travel_queryset_by_id(travel_id)
+    travel = Travel.get_travel_by_id(travel_id)
 
-    travel.delete()
+    if not travel or travel == []:
+        return
+
+    locations = Travel.get_sorted_locations(travel)
+
+    pages = (len(locations) + Config.PAGE_SIZE - 1) // Config.PAGE_SIZE
+
+    try:
+        await callback.message.edit_text(
+            messages.LOCATIONS,
+            reply_markup=locations_keyboard(
+                locations,
+                page,
+                pages,
+                travel_id,
+            ),
+        )
+    except TelegramBadRequest:
+        pass
+
+
+@router.callback_query(
+    F.data.startswith("travel_location_detail"),
+    RegisteredCallback(),
+    StateFilter(None),
+)
+async def travel_detail_location_callback(
+    callback: CallbackQuery,
+):
+    if (
+        callback.message is None
+        or callback.data is None
+        or not isinstance(callback.message, Message)
+    ):
+        return
+
+    location_id = int(callback.data.replace("travel_location_detail_", ""))
+
+    location = Location.get_location_by_id(location_id)
+
+    if not location or location == []:
+        return
+
+    try:
+        await callback.message.edit_text(
+            location.get_location_text(),
+            reply_markup=location_get(location.travel.id, location.id),
+        )
+    except TelegramBadRequest:
+        pass
+
+
+@router.callback_query(
+    F.data.startswith("travel_locationdelete"),
+    RegisteredCallback(),
+    StateFilter(None),
+)
+async def travel_locations_delete_callback(
+    callback: CallbackQuery,
+):
+    if (
+        callback.message is None
+        or callback.data is None
+        or not isinstance(callback.message, Message)
+    ):
+        return
+
+    location_id = int(callback.data.replace("travel_locationdelete_", ""))
+
+    location_queryset = Location.get_location_queryset_by_id(location_id)
+
+    if not location_queryset or location_queryset == []:
+        return
+
+    travel = location_queryset.first().travel
+
+    location_queryset.delete()
 
     session.commit()
 
-    await callback.message.answer(messages.DELETED_TRAVEL)
+    locations = Travel.get_sorted_locations(travel)
 
-    await callback.message.delete()
+    pages = (len(locations) + Config.PAGE_SIZE - 1) // Config.PAGE_SIZE
+
+    try:
+        await callback.message.edit_text(
+            messages.LOCATIONS,
+            reply_markup=locations_keyboard(
+                locations,
+                0,
+                pages,
+                travel.id,
+            ),
+        )
+    except TelegramBadRequest:
+        pass
+
+    await callback.message.answer(
+        messages.LOCATION_DELETED,
+    )
+
+    await callback.answer()
+
+
+@router.callback_query(
+    F.data.startswith("travel_locationsights"),
+    RegisteredCallback(),
+    StateFilter(None),
+)
+async def travel_locationsights_callback(
+    callback: CallbackQuery,
+):
+    if (
+        callback.message is None
+        or callback.data is None
+        or not isinstance(callback.message, Message)
+    ):
+        return
+
+    location_id = int(callback.data.replace("travel_locationsights_", ""))
+
+    location = Location.get_location_by_id(location_id)
+
+    if not location or location == []:
+        return
+
+    geocode = get_location_by_name(location.location)
+
+    sights = find_trips(geocode[1].raw.get("lat"), geocode[1].raw.get("lon"))
+
+    if sights is None or len(sights) == 0:
+        await callback.message.answer(
+            messages.NO_SIGHTS_FOUND.format(
+                location=location.location,
+                distance=Config.NEARBY_SIGHTS_RADIUS,
+            ),
+        )
+    else:
+        await callback.message.answer(
+            messages.SIGHTS_HEADER
+            + messages.SIGHTS_FOOTER.format(
+                location=location.location,
+                sights_count=len(sights),
+                distance=Config.NEARBY_SIGHTS_RADIUS,
+            ),
+            reply_markup=sights_keyboard(sights[:20]),
+        )
+
+    await callback.answer()
+
+
+@router.callback_query(
+    F.data.startswith("travel_sight_detail"),
+    RegisteredCallback(),
+    StateFilter(None),
+)
+async def travel_sight_detail_callback(
+    callback: CallbackQuery,
+):
+    if (
+        callback.message is None
+        or callback.data is None
+        or not isinstance(callback.message, Message)
+    ):
+        return
+
+    sight_xid = callback.data.replace("travel_sight_detail_", "")
+
+    await get_info_by_xid(callback, sight_xid)
+
+    await callback.answer()
+
+
+@router.callback_query(
+    F.data.startswith("travel_locationweather"),
+    RegisteredCallback(),
+    StateFilter(None),
+)
+async def travel_locationweather_callback(
+    callback: CallbackQuery,
+):
+    if (
+        callback.message is None
+        or callback.data is None
+        or not isinstance(callback.message, Message)
+    ):
+        return
+
+    location_id = int(callback.data.replace("travel_locationweather_", ""))
+
+    location = Location.get_location_by_id(location_id)
+
+    if not location or location == []:
+        return
+
+    geocode = get_location_by_name(location.location)
+
+    weather = get_current_weather(
+        geocode[1].raw.get("lat"),
+        geocode[1].raw.get("lon"),
+    )
+
+    await callback.message.answer(
+        messages.LOCATION_WEATHER.format(
+            location=location.location,
+            weather_main=weather.get("weather")[0].get("main"),
+            temp=weather.get("main").get("temp"),
+            feels_like=weather.get("main").get("feels_like"),
+            temp_min=weather.get("main").get("temp_min"),
+            temp_max=weather.get("main").get("temp_max"),
+            pressure=weather.get("main").get("pressure"),
+            humidity=weather.get("main").get("humidity"),
+        ),
+        reply_to_message_id=callback.message.message_id,
+    )
 
     await callback.answer()

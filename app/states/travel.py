@@ -28,3 +28,10 @@ class CreateLocationState(StatesGroup):
     location = State()
     date_start = State()
     date_end = State()
+
+
+class CreateNoteState(StatesGroup):
+    travel_id = State()
+    file_id = State()
+    file_type = State()
+    file_name = State()

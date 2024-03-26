@@ -1,6 +1,7 @@
 black
 mypy
 sort-requirements
+types-requests==2.31
 
 -r prod.txt
 -r test.txt

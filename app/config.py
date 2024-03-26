@@ -17,4 +17,11 @@ class Config:
         "REDIS_URL",
         "redis://localhost:6379",
     )
+    OPENTRIPMAP_API_KEY = os.getenv(
+        "OPENTRIPMAP_API_KEY",
+    )
+    OPENWEATHERMAP_API_KEY = os.getenv(
+        "OPENWEATHERMAP_API_KEY",
+    )
+    NEARBY_SIGHTS_RADIUS = 2000
     PAGE_SIZE = 6

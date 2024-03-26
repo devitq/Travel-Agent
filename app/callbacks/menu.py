@@ -91,3 +91,16 @@ async def travels_callback(
         )
 
     await callback.answer()
+
+
+@router.callback_query(
+    F.data == "menu_help",
+    RegisteredCallback(),
+    StateFilter(None),
+)
+async def help_callback(callback: CallbackQuery) -> None:
+    if not isinstance(callback.message, Message):
+        return
+
+    await callback.message.answer(messages.HELP_MESSAGE)
+    await callback.answer()

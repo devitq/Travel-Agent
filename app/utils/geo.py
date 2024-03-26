@@ -1,5 +1,5 @@
 # type: ignore
-__all__ = ("validate_country", "validate_city", "get_location_by_name")
+__all__ = ("get_location_by_name", "validate_country", "validate_city")
 
 from geopy.exc import GeocoderTimedOut
 from geopy.geocoders import Nominatim
@@ -81,7 +81,6 @@ def get_location_by_name(location: str) -> None:
         try:
             geocode = geolocator.geocode(
                 location,
-                featuretype="city",
             )
             break
         except GeocoderTimedOut:

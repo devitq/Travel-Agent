@@ -22,7 +22,7 @@ router = Router(name="profile_callback")
 
 
 @router.callback_query(
-    F.data.startswith("profile_change_"),
+    F.data.startswith("profile_change"),
     StateFilter(None),
     RegisteredCallback(),
 )
@@ -227,8 +227,12 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
     state_data = await state.get_data()
 
     user = User.get_user_queryset_by_telegram_id(message.from_user.id)
+    user_first = user.first()
 
     if isinstance(state_data["value"], list):
+        old_value = user_first.country + ", " + user_first.city
+        new_value = state_data["value"][0] + ", " + state_data["value"][1]
+
         user.update(
             {
                 "country": state_data["value"][0],
@@ -241,6 +245,9 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
         except TelegramBadRequest:
             pass
     else:
+        old_value = getattr(user.first(), str(column))
+        new_value = state_data["value"]
+
         data = {state_data["column"]: state_data["value"]}
         user.update(data)
 
@@ -260,7 +267,11 @@ async def profile_change_entered(message: Message, state: FSMContext) -> None:
         pass
 
     await message.answer(
-        messages.PROFILE_UPDATED,
+        messages.PROFILE_UPDATED.format(
+            key=state_data["column"],
+            old_value=old_value if old_value else messages.NOT_SET,
+            new_value=(new_value if new_value else messages.NOT_SET),
+        ),
         reply_markup=ReplyKeyboardRemove(),
     )
 

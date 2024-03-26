@@ -23,8 +23,8 @@ def get():
             callback_data="menu_travels",
         ),
         types.InlineKeyboardButton(
-            text="🔵 Temp",
-            callback_data="menu_temp",
+            text="❓ Help",
+            callback_data="menu_help",
         ),
     )
 

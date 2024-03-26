@@ -6,7 +6,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.redis import RedisStorage
 
-from app.callbacks import menu, profile, travels
+from app.callbacks import location, menu, notes, profile, travel
 from app.config import Config
 from app.handlers import (
     create_travel_command,
@@ -40,7 +40,9 @@ async def main() -> None:
         travels_command.router,
         menu.router,
         profile.router,
-        travels.router,
+        travel.router,
+        location.router,
+        notes.router,
     )
 
     await bot.delete_webhook(drop_pending_updates=True)

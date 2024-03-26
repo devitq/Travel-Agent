@@ -1,8 +1,8 @@
 """Added travel models
 
-Revision ID: 4dea8f302149
+Revision ID: 78ab1b779ca8
 Revises: 4914f00ae14a
-Create Date: 2024-03-24 17:56:20.975589
+Create Date: 2024-03-25 17:23:37.917899
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '4dea8f302149'
+revision: str = '78ab1b779ca8'
 down_revision: Union[str, None] = '4914f00ae14a'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -28,8 +28,7 @@ def upgrade() -> None:
         sa.Column('description', sa.String(length=100), nullable=True),
         sa.Column('author_id', sa.BigInteger(), nullable=False),
         sa.ForeignKeyConstraint(
-            ['author_id'],
-            ['users.telegram_id'],
+            ['author_id'], ['users.telegram_id'], ondelete='CASCADE'
         ),
         sa.PrimaryKeyConstraint('id'),
         sa.UniqueConstraint('title'),
@@ -43,8 +42,7 @@ def upgrade() -> None:
         sa.Column('date_end', sa.DateTime(timezone=True), nullable=False),
         sa.Column('travel_id', sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(
-            ['travel_id'],
-            ['travels.id'],
+            ['travel_id'], ['travels.id'], ondelete='CASCADE'
         ),
         sa.PrimaryKeyConstraint('id'),
     )
@@ -59,12 +57,10 @@ def upgrade() -> None:
         sa.Column('author_id', sa.BigInteger(), nullable=False),
         sa.Column('travel_id', sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(
-            ['author_id'],
-            ['users.telegram_id'],
+            ['author_id'], ['users.telegram_id'], ondelete='CASCADE'
         ),
         sa.ForeignKeyConstraint(
-            ['travel_id'],
-            ['travels.id'],
+            ['travel_id'], ['travels.id'], ondelete='CASCADE'
         ),
         sa.PrimaryKeyConstraint('id'),
     )
@@ -74,12 +70,10 @@ def upgrade() -> None:
         sa.Column('user_id', sa.BigInteger(), nullable=True),
         sa.Column('travel_id', sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(
-            ['travel_id'],
-            ['travels.id'],
+            ['travel_id'], ['travels.id'], ondelete='CASCADE'
         ),
         sa.ForeignKeyConstraint(
-            ['user_id'],
-            ['users.telegram_id'],
+            ['user_id'], ['users.telegram_id'], ondelete='CASCADE'
         ),
     )
     # ### end Alembic commands ###
