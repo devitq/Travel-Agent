@@ -70,7 +70,12 @@ async def create_note_file_id(message: Message, state: FSMContext):
 
         return
 
-    if message.photo is None and message.document is None:
+    if (
+        message.photo is None
+        and message.document is None
+        and message.video is None
+        and message.voice is None
+    ):
         return
 
     if message.photo is not None:
@@ -80,8 +85,6 @@ async def create_note_file_id(message: Message, state: FSMContext):
             file_name="photo",
         )
 
-        # await message.answer_photo(message.photo[-1].file_id)
-
     elif message.document is not None:
         await state.update_data(
             file_type="document",
@@ -89,7 +92,19 @@ async def create_note_file_id(message: Message, state: FSMContext):
             file_name=message.document.file_name,
         )
 
-        # await message.answer_document(message.document.file_id)
+    elif message.video is not None:
+        await state.update_data(
+            file_type="video",
+            file_id=message.video.file_id,
+            file_name="video",
+        )
+
+    elif message.voice is not None:
+        await state.update_data(
+            file_type="voice",
+            file_id=message.voice.file_id,
+            file_name="voice",
+        )
 
     data = await state.get_data()
 
@@ -207,6 +222,18 @@ async def travel_notesend_callback(
 
     elif note.file_type == "document":
         await callback.message.answer_document(
+            note.file_id,
+            reply_to_message_id=callback.message.message_id,
+        )
+
+    elif note.file_type == "video":
+        await callback.message.answer_video(
+            note.file_id,
+            reply_to_message_id=callback.message.message_id,
+        )
+
+    elif note.file_type == "voice":
+        await callback.message.answer_voice(
             note.file_id,
             reply_to_message_id=callback.message.message_id,
         )

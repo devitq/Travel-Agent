@@ -170,6 +170,10 @@ def notes_keyboard(notes, page: int, pages: int, travel_id: int):
     for note in notes[start_index:end_index]:
         if note.file_type == "photo":
             button_text = f"Photo ID: {note.id}"
+        elif note.file_type == "video":
+            button_text = f"Video ID: {note.id}"
+        elif note.file_type == "voice":
+            button_text = f"Voice ID: {note.id}"
         else:
             button_text = note.file_name
 

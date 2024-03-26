@@ -41,7 +41,7 @@ ENTER_LOCATION_DATE_END = "Enter location end datetime(in UTC) in this format:\n
 INVALID_DATE_END = "End date can't be earlier or equal to start date."
 LOCATION_ADDED = "✅ Location added"
 
-ADD_NOTE = "✏️ Send me file or photo to add note.\n<i>Enter /cancel to cancel creating.</i>"
+ADD_NOTE = "✏️ Send me file, photo, video or voice nessage to add note.\n<i>Enter /cancel to cancel creating.</i>"
 
 DELETED_TRAVEL = "✅ Travel deleted"
 TRAVELS = "📃 <b>Travels:</b>\n<i>👑 - owner</i>"
