@@ -142,13 +142,13 @@ There are also lots of small features and cool things that could be discovered w
 ### Clone repository with git
 
 ```bash
-git clone https://github.com/Central-University-IT-prod/backend-devitq.git
+git clone https://github.com/devitq/Travel-Agent
 ```
 
 ### Navigate to the project directory
 
 ```bash
-cd backend-devitq
+cd Travel-Agent
 ```
 
 ### Create virtual enviroment & activate it
@@ -224,13 +224,13 @@ travel_agent /
 ### Clone repository with git
 
 ```bash
-git clone https://github.com/Central-University-IT-prod/backend-devitq.git
+git clone https://github.com/devitq/Travel-Agent
 ```
 
 ### Navigate to the project directory
 
 ```bash
-cd backend-devitq
+cd Travel-Agent
 ```
 
 ### Setup .env file
