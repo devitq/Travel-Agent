@@ -4,7 +4,7 @@ version: "3"
 services:
   postgres:
     image: postgres:16.2-alpine
-    container_name: postgres
+    container_name: travel_agent-postgres
     healthcheck:
       test: pg_isready -U postgres -h localhost
       interval: 5s
@@ -21,7 +21,7 @@ services:
 
   redis:
     image: redis:7.2-alpine
-    container_name: redis
+    container_name: travel_agent-redis
     healthcheck:
       test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
     ports:
@@ -31,24 +31,24 @@ services:
 
   app:
     build: .
-    container_name: app
+    container_name: travel_agent-app
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
     environment:
-      BOT_TOKEN: ${BOT_TOKEN:-6943803094:AAFxMjuiaqLlQbITUOVPlKx6SKIofKrThwk}
+      BOT_TOKEN: ${BOT_TOKEN}
       REDIS_URL: redis://redis:${REDIS_PORT:-6379}/
       SQLALCHEMY_DATABASE_URI: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-postgres}
-      OPENTRIPMAP_API_KEY: ${OPENTRIPMAP_API_KEY:-5ae2e3f221c38a28845f05b65004e18feef4a0f1a06c9554424e9f14}
-      OPENWEATHERMAP_API_KEY: ${OPENWEATHERMAP_API_KEY:-3673b2ff64c097b3f79fc93e429e7ed1}
+      OPENTRIPMAP_API_KEY: ${OPENTRIPMAP_API_KEY}
+      OPENWEATHERMAP_API_KEY: ${OPENWEATHERMAP_API_KEY}
     entrypoint: ["bash", "-c"]
     command: ["alembic -c app/alembic.ini upgrade head && python -m app"]
 
   pgadmin:
     image: dpage/pgadmin4:8.4
-    container_name: pgadmin
+    container_name: travel_agent-pgadmin
     depends_on:
       postgres:
         condition: service_healthy

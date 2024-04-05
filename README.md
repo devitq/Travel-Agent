@@ -255,7 +255,3 @@ docker compose pull
 ```bash
 docker compose up -d --build
 ```
-
-## 📝 Notes
-
-I thought up the architecture of the project myself, I won't mind feedback on it)
