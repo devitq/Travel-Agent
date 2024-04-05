@@ -16,12 +16,14 @@ This bot will help you organise and plan your travels.
 
 ### [Python](https://python.org/)
 
-Python is used successfully in thousands of real-world business applications around the world, including many large and mission critical systems.Service to easily build routes between points on map. User sees we
+Python is used successfully in thousands of real-world business applications around the world, including many large and mission critical systems.
+
 *Version: 3.12*
 
 ### [aiogram](https://aiogram.dev/)
 
 aiogram is a modern and fully asynchronous framework for Telegram Bot API using asyncio and aiohttp.
+
 *Version: 3.4*
 
 ### [SQLAlchemy](https://www.sqlalchemy.org/)
@@ -29,6 +31,7 @@ aiogram is a modern and fully asynchronous framework for Telegram Bot API using 
 SQLAlchemy is the Python SQL toolkit and Object Relational Mapper that gives application developers the full power and flexibility of SQL.
 
 It provides a full suite of well known enterprise-level persistence patterns, designed for efficient and high-performing database access, adapted into a simple and Pythonic domain language.
+
 *Version: 2*
 
 ### [PostgreSQL](https://www.postgresql.org/)
@@ -36,6 +39,7 @@ It provides a full suite of well known enterprise-level persistence patterns, de
 PostgreSQL is a powerful, open source object-relational database system with over 35 years of active development that has earned it a strong reputation for reliability, feature robustness, and performance.
 
 In project used as the main database.
+
 *Version: 16.2*
 
 ### [Redis](https://redis.io/)
@@ -43,6 +47,7 @@ In project used as the main database.
 The in-memory data store used by millions of developers as a cache, vector database, document database, streaming engine, and message broker.
 
 In project redis used as storage for states.
+
 *Version: 7.2*
 
 ## 🤝 Integrations
