@@ -4,7 +4,7 @@
 
 This bot will help you organise and plan your travels.
 
-**Link:** [@itq_travel_agent_bot](https://t.me/@itq_travel_agent_bot/)
+**Link:** [@itq_travel_agent_bot](https://itq_travel_agent_bot.t.me/)
 
 ## ER Diagram
 
