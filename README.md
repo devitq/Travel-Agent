@@ -1,4 +1,4 @@
-![banner](/img/banner.png)
+![banner](/.github/img/banner.png)
 
 # ✈️ Travel agent bot
 
@@ -8,7 +8,7 @@ This bot will help you organise and plan your travels.
 
 ## ER Diagram
 
-![ER Diagram](/img/ER.png)
+![ER Diagram](/.github/img/ER.png)
 
 [live preview](https://dbdiagram.io/d/Travel-agent-65f5a7c0ae072629ce2bd716)
 
@@ -74,7 +74,7 @@ API to easily get current weather in specified location.
 
 ### Registration
 
-![Registration](/img/gifs/Registration.gif)
+![Registration](/.github/img/gifs/Registration.gif)
 
 The first step is, of cource, registration. User needs to fill in some information about himself before using the bot:
 
@@ -89,13 +89,13 @@ The first step is, of cource, registration. User needs to fill in some informati
 
 ### Profile
 
-![Profile](/img/gifs/Profile.gif)
+![Profile](/.github/img/gifs/Profile.gif)
 
 User can edit and view it's profile anytime.
 
 ### Travels creation and editing
 
-![TravelCreationAndEdit](/img/gifs/TravelCreationAndEdit.gif)
+![TravelCreationAndEdit](/.github/img/gifs/TravelCreationAndEdit.gif)
 
 User can create, view, edit and delete travel:
 
@@ -106,7 +106,7 @@ User can create, view, edit and delete travel:
 
 ### Locations creation and editing
 
-![LocationCreationAndEditing](/img/gifs/LocationCreationAndEditing.gif)
+![LocationCreationAndEditing](/.github/img/gifs/LocationCreationAndEditing.gif)
 
 User can create and delete locations
 
@@ -118,19 +118,19 @@ User can create and delete locations
 
 ### Planning routes
 
-![RoutePlanning](/img/gifs/RoutePlanning.gif)
+![RoutePlanning](/.github/img/gifs/RoutePlanning.gif)
 
 User can plan routes between locations he specified
 
 ### Notes creation and editing
 
-![NoteCreationAndEditing](/img/gifs/NoteCreationAndEditing.gif)
+![NoteCreationAndEditing](/.github/img/gifs/NoteCreationAndEditing.gif)
 
 User can create note(it could be file or photo) and edit it
 
 ### Getting nearby sights and weather of location
 
-![GettingWeatherAndNearbySights](/img/gifs/GettingWeatherAndNearbySights.gif)
+![GettingWeatherAndNearbySights](/.github/img/gifs/GettingWeatherAndNearbySights.gif)
 
 User can get location nearby sights(in 2 km radius) and get detailed description of sight.
 Alsoo user can get current weather in location
