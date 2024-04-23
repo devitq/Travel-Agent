@@ -1,5 +1,4 @@
 name: travel_agent_bot
-version: "3"
 
 services:
   postgres:
