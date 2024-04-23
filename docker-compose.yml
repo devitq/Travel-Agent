@@ -47,7 +47,7 @@ services:
     command: ["alembic -c app/alembic.ini upgrade head && python -m app"]
 
   pgadmin:
-    image: dpage/pgadmin4:8.4
+    image: dpage/pgadmin4:8.5
     container_name: travel_agent-pgadmin
     depends_on:
       postgres:
