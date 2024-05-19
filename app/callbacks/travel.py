@@ -11,6 +11,7 @@ from app.config import Config
 from app.filters.user import Registered, RegisteredCallback
 from app.keyboards.builders import travels_keyboard
 from app.keyboards.travel import get as travel_get
+from app.keyboards.routes import get as routes_get
 from app.models.travel import Travel
 from app.models.user import User
 from app.states.travel import (
@@ -19,7 +20,7 @@ from app.states.travel import (
 from app.utils.states import delete_message_from_state, handle_validation_error
 
 
-router = Router(name="menu_callback")
+router = Router(name="travel_callback")
 
 
 @router.callback_query(
@@ -298,6 +299,38 @@ async def delete_travel_callback(
             pages,
             callback.from_user.id,
         ),
+    )
+
+    await callback.answer()
+
+
+@router.callback_query(
+    F.data.startswith("travel_routes"),
+    RegisteredCallback(),
+    StateFilter(None),
+)
+async def travel_routes_callback(
+    callback: CallbackQuery,
+):
+    if (
+        callback.message is None
+        or callback.data is None
+        or not isinstance(callback.message, Message)
+    ):
+        return
+
+    travel_id = int(callback.data.replace("travel_routes_", ""))
+
+    travel = Travel().get_travel_by_id(travel_id)
+
+    if not travel:
+        await callback.answer()
+
+        return
+
+    await callback.message.edit_text(
+        travel.get_travel_text(),
+        reply_markup=routes_get(travel),
     )
 
     await callback.answer()

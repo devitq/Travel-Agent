@@ -17,7 +17,7 @@ from app.states.travel import (
 )
 
 
-router = Router(name="menu_callback")
+router = Router(name="notes_callback")
 
 
 @router.callback_query(
@@ -110,12 +110,26 @@ async def create_note_file_id(message: Message, state: FSMContext):
 
     data["author_id"] = message.from_user.id
 
-    session.add(Note(**data))
+    note = Note(**data)
+
+    session.add(note)
 
     session.commit()
 
+    if not note or note == []:
+        return
+
+    if note.file_type == "photo":
+        file_name = f"Photo ID: {note.id}"
+    elif note.file_type == "video":
+        file_name = f"Video ID: {note.id}"
+    elif note.file_type == "voice":
+        file_name = f"Voice ID: {note.id}"
+    else:
+        file_name = note.file_name
+
     await message.answer(
-        messages.NOTE_ADDED.format(file_name=data["file_name"]),
+        messages.NOTE_ADDED.format(file_name=file_name),
     )
 
     await state.clear()
@@ -299,12 +313,20 @@ async def travel_notedelete_callback(
 
     note = Note().get_note_queryset_by_id(note_id)
 
-    note_first = note.first()
-    file_name = note_first.file_name
-    travel = note_first.travel
-
     if not note or note == []:
         return
+
+    note_first = note.first()
+    travel = note_first.travel
+
+    if note_first.file_type == "photo":
+        file_name = f"Photo ID: {note_first.id}"
+    elif note_first.file_type == "video":
+        file_name = f"Video ID: {note_first.id}"
+    elif note_first.file_type == "voice":
+        file_name = f"Voice ID: {note_first.id}"
+    else:
+        file_name = note_first.file_name
 
     note.delete()
 

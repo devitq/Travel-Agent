@@ -243,7 +243,7 @@ class Note(Base):
     def get_note_text(self):
         return messages.NOTE_DETAIL.format(
             file_name=self.file_name,
-            file_type=self.file_type,
+            file_type=self.file_type.capitalize(),
             public="Yes" if self.public else "No",
         )
 

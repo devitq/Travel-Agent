@@ -4,20 +4,9 @@ from aiogram import types
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from app.models.travel import Travel
-from app.utils.geo import get_location_by_name
-from app.utils.map import get_url_map
 
 
 def get(travel: Travel):
-    locations = Travel().get_sorted_locations(travel, asc=False)
-    coordinats = []
-
-    for location in locations:
-        geocode = get_location_by_name(location.location)
-        coordinats.append(
-            [geocode[1].raw.get("lat"), geocode[1].raw.get("lon")],
-        )
-
     builder = InlineKeyboardBuilder()
 
     builder.row(
@@ -62,35 +51,8 @@ def get(travel: Travel):
     )
     builder.row(
         types.InlineKeyboardButton(
-            text="🗺️ Route by car",
-            web_app=types.WebAppInfo(
-                url=get_url_map(
-                    coordinats=coordinats,
-                    profile="car",
-                ),
-            ),
-        ),
-    )
-    builder.row(
-        types.InlineKeyboardButton(
-            text="🗺️ Route on foot",
-            web_app=types.WebAppInfo(
-                url=get_url_map(
-                    coordinats=coordinats,
-                    profile="foot",
-                ),
-            ),
-        ),
-    )
-    builder.row(
-        types.InlineKeyboardButton(
-            text="🗺️ Route by bike",
-            web_app=types.WebAppInfo(
-                url=get_url_map(
-                    coordinats=coordinats,
-                    profile="bike",
-                ),
-            ),
+            text="🗺️ Routes",
+            callback_data=f"travel_routes_{travel.id}",
         ),
     )
     builder.row(
@@ -110,15 +72,6 @@ def get(travel: Travel):
 
 
 def get_public(travel: Travel):
-    locations = Travel().get_sorted_locations(travel, asc=False)
-    coordinats = []
-
-    for location in locations:
-        geocode = get_location_by_name(location.location)
-        coordinats.append(
-            [geocode[1].raw.get("lat"), geocode[1].raw.get("lon")],
-        )
-
     builder = InlineKeyboardBuilder()
 
     builder.row(
@@ -145,35 +98,8 @@ def get_public(travel: Travel):
     )
     builder.row(
         types.InlineKeyboardButton(
-            text="🗺️ Route by car",
-            web_app=types.WebAppInfo(
-                url=get_url_map(
-                    coordinats=coordinats,
-                    profile="car",
-                ),
-            ),
-        ),
-    )
-    builder.row(
-        types.InlineKeyboardButton(
-            text="🗺️ Route on foot",
-            web_app=types.WebAppInfo(
-                url=get_url_map(
-                    coordinats=coordinats,
-                    profile="foot",
-                ),
-            ),
-        ),
-    )
-    builder.row(
-        types.InlineKeyboardButton(
-            text="🗺️ Route by bike",
-            web_app=types.WebAppInfo(
-                url=get_url_map(
-                    coordinats=coordinats,
-                    profile="bike",
-                ),
-            ),
+            text="🗺️ Routes",
+            callback_data=f"travel_routes_{travel.id}",
         ),
     )
     builder.row(

@@ -6,17 +6,8 @@ from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.redis import RedisStorage
 
-from app.callbacks import location, menu, notes, profile, travel
+from app import callbacks, handlers, middlewares
 from app.config import Config
-from app.handlers import (
-    create_travel_command,
-    help_command,
-    menu_command,
-    profile_command,
-    start_command,
-    travels_command,
-)
-from app.middlewares.throttling import ThrottlingMiddleware
 
 
 async def main() -> None:
@@ -29,20 +20,21 @@ async def main() -> None:
     dp = Dispatcher(storage=storage)
     bot = Bot(bot_token, parse_mode=ParseMode.HTML)
 
-    dp.message.middleware(ThrottlingMiddleware(0.5))
+    dp.message.middleware(middlewares.throttling.ThrottlingMiddleware(0.5))
 
     dp.include_routers(
-        start_command.router,
-        help_command.router,
-        menu_command.router,
-        profile_command.router,
-        create_travel_command.router,
-        travels_command.router,
-        menu.router,
-        profile.router,
-        travel.router,
-        location.router,
-        notes.router,
+        handlers.start_command.router,
+        handlers.help_command.router,
+        handlers.menu_command.router,
+        handlers.profile_command.router,
+        handlers.create_travel_command.router,
+        handlers.travels_command.router,
+        callbacks.menu.router,
+        callbacks.profile.router,
+        callbacks.travel.router,
+        callbacks.location.router,
+        callbacks.notes.router,
+        callbacks.fallback.router,
     )
 
     await bot.delete_webhook(drop_pending_updates=True)
